@@ -77,9 +77,6 @@ class CommonMiddleware {
                 process.env.JWT_TOKEN
             )
             req.user = decodedData
-            log('Devoced user start')
-            log(decodedData)
-            log('Decoded user end')
             next()
         } catch (e) {
             error(e, req, res, 401)
