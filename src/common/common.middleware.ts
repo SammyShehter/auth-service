@@ -26,18 +26,60 @@ class CommonMiddleware {
         }
     }
 
-    authUser = async (
+    auth = async (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        try {
+            if (req.headers.authorization) return this.authUserToken(req, res, next)
+
+            if (req.headers.apikey) return this.apiKeyAuth(req, res, next)
+    
+            throw new Error('No authentication provided')   
+        } catch (e) {
+            error(e, req, res, 401)
+        }
+    }
+
+    private apiKeyAuth = async (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        try {
+            const apikey = req.headers.apikey
+            if(apikey === process.env.APIKEY){
+                req.user = {
+                    roles: ['SERVER']
+                }
+                next()
+            } else {
+                throw new Error('Api key is not correct')
+            }
+        } catch (e) {
+            error(e, req, res, 401)
+        }
+    }
+
+    private authUserToken = async (
         req: express.Request,
         res: express.Response,
         next: express.NextFunction
     ) => {
         try {
             const token = req.headers.authorization?.split(' ')[1]
-            if(!token){
+            if (!token) {
                 throw new Error(`No token provided`)
             }
-            const decodedData: decodedUser = jwt.verify(token, process.env.JWT_TOKEN)
+            const decodedData: decodedUser = jwt.verify(
+                token,
+                process.env.JWT_TOKEN
+            )
             req.user = decodedData
+            log('Devoced user start')
+            log(decodedData)
+            log('Decoded user end')
             next()
         } catch (e) {
             error(e, req, res, 401)
@@ -52,15 +94,17 @@ class CommonMiddleware {
         ) => {
             try {
                 const roles: string[] = req.user.roles
-                
+
                 let hasPermission: boolean = false
-                allowedRoles.forEach(role => {
-                    if(roles.includes(role)){
+                allowedRoles.forEach((role) => {
+                    if (roles.includes(role)) {
                         hasPermission = true
                     }
                 })
-                if(!hasPermission){
-                    throw new Error(`You're not allowed to recieve this content`)
+                if (!hasPermission) {
+                    throw new Error(
+                        `You're not allowed to recieve this content`
+                    )
                 } else {
                     next()
                 }

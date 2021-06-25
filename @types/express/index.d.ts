@@ -11,8 +11,9 @@ declare global {
 }
 
 
-// declare module 'http' {
-//     interface IncomingHttpHeaders {
-        
-//     }
-// }
+declare module 'http' {
+    interface IncomingHttpHeaders {
+        apikey?:string
+        host: string
+    }
+}

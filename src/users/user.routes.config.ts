@@ -4,42 +4,47 @@ import CommonMiddleware from '../common/common.middleware'
 import UsersController from './controllers/user.controller'
 import UsersMiddleware from './middleware/user.middleware'
 import { check } from 'express-validator'
-import userMiddleware from './middleware/user.middleware'
 
 export class UsersRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
         super(app, 'UsersRoutes')
     }
 
+    public static allowedPortal = ['mafia']
+
     configureRoutes() {
         this.app
-            .route('/users')
+            .route('/')
             .all(
-                CommonMiddleware.authUser,
-                CommonMiddleware.authRole(['ADMIN']),
+                CommonMiddleware.auth, // main auth controller(apikey or userToken check)
+                CommonMiddleware.authRole(['ADMIN', 'SERVER'])
             )
             .get(UsersController.getAllUsers)
 
         this.app
-            .route('/users/login')
+            .route('/login')
             .all(
-                CommonMiddleware.trimStrings,
-                check('username', `Username can't be empty`).notEmpty(),
-                check('password', `Password can't be empty`).notEmpty(),
-                CommonMiddleware.validatorErrors,
+                // CommonMiddleware.trimStrings,
+                check('username').notEmpty().trim().escape(),
+                check('password').notEmpty().trim().escape(),
+                CommonMiddleware.validatorErrors
             )
             .post(UsersController.login)
 
         this.app
-            .route('/users/registration')
+            .route('/registration')
             .all(
-                CommonMiddleware.trimStrings,
-                check('username', `Username can't be empty`).notEmpty(),
-                check(
-                    'password',
-                    'Password has to contain more than 4and less than 10 symbols'
-                ).isLength({ min: 4, max: 10 }),
+                // CommonMiddleware.trimStrings,
+                check('username').notEmpty().trim().escape(),
+                check('email').isEmail().normalizeEmail(),
+                check('portal').notEmpty().trim().escape(),
+                check('password')
+                    .notEmpty()
+                    .trim()
+                    .escape()
+                    .isLength({ min: 4, max: 10 }),
                 CommonMiddleware.validatorErrors,
+                UsersMiddleware.ecoSystemUser(UsersRoutes.allowedPortal),
                 UsersMiddleware.checkNewUserExists
             )
             .post(UsersController.registration)

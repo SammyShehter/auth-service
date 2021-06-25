@@ -1,4 +1,4 @@
 export type decodedUser = {
-    id: string
+    id?: string
     roles: string[]
 }

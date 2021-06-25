@@ -4,7 +4,7 @@ import { UserModel } from '../models/user.model'
 import { RoleModel } from '../models/role.model'
 import debug from 'debug'
 import UsersService from '../services/user.service'
-import { user } from '../types/user.types'
+// import { user } from '../types/user.types'
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
@@ -16,7 +16,8 @@ class UserController {
         res: express.Response
     ) => {
         try {
-            return res.status(200).json({message: 'ok'})
+            const users = await UsersService.getAllUsers()
+            return res.status(200).json(users)
         } catch (e) {
             return error(e, req, res)
         }
@@ -45,12 +46,15 @@ class UserController {
         res: express.Response
     ) => {
         try {
-            const { username, password } = req.body
+            const { username, email, portal, password, role } = req.body
             const hash = bcrypt.hashSync(password, saltRounds)
-            const userRole = await RoleModel.findOne({ value: 'USER' })
+            const userRole = await RoleModel.findOne({ value: role })
+            if(!userRole) throw new Error('Role is incorrect')
             const newUser = new UserModel({
                 username,
+                email,
                 password: hash,
+                portals:[portal],
                 roles: [userRole.value],
             })
             await newUser.save()

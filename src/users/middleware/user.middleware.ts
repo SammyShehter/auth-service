@@ -73,6 +73,23 @@ export class UsersMiddleware {
         }
     }
 
+    public ecoSystemUser = (allowedPortal: string[]) => async (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        try {
+            const portalUser = req.body.portal
+            if(portalUser &&  allowedPortal.includes(portalUser)){
+                next()
+            } else {
+                throw new Error('This type of portal is not supported')
+            }
+        } catch (e) {
+            error(e, req, res, 400)
+        }
+    }
+
     public checkNewUserExists = async (
         req: express.Request,
         res: express.Response,
