@@ -72,7 +72,7 @@ class CommonMiddleware {
             if (!token) {
                 throw new Error(`No token provided`)
             }
-            const decodedData: decodedUser = jwt.verify(
+            const decodedData: any = jwt.verify( //weird error
                 token,
                 process.env.JWT_TOKEN
             )
