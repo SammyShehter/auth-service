@@ -26,16 +26,20 @@ class UserController {
     public login = async (req: express.Request, res: express.Response) => {
         try {
             const { username, password } = req.body
-            const user = await UserModel.findOne({username})
-            if(!user){
-                throw new Error(`One or more fields are incorrect, please review your request`)
+            const user = await UserModel.findOne({ username })
+            if (!user) {
+                throw new Error(
+                    `One or more fields are incorrect, please review your request`
+                )
             }
             const validatePassword = bcrypt.compareSync(password, user.password)
-            if(!validatePassword){
-                throw new Error(`One or more fields are incorrect, please review your request`)
+            if (!validatePassword) {
+                throw new Error(
+                    `One or more fields are incorrect, please review your request`
+                )
             }
             const token = UsersService.generateAccessToken(user._id, user.roles)
-            res.status(200).json({message: 'Success!', token})
+            res.status(200).json({ message: 'Success!', token })
         } catch (e) {
             return error(e, req, res)
         }
@@ -49,16 +53,22 @@ class UserController {
             const { username, email, portal, password } = req.body
             const hash = bcrypt.hashSync(password, saltRounds)
             const userRole = await RoleModel.findOne({ value: `USER` })
-            if(!userRole) throw new Error('Role is incorrect')
+            if (!userRole) throw new Error('Role is incorrect')
             const newUser = new UserModel({
                 username,
                 email,
                 password: hash,
-                portals:[portal],
+                portals: [portal],
                 roles: [userRole.value],
             })
             await newUser.save()
-            return res.status(200).json({message:`${username} user was created!`})
+            const token = UsersService.generateAccessToken(
+                newUser._id,
+                newUser.roles
+            )
+            return res
+                .status(200)
+                .json({ message: `${username} user was created!`, token })
         } catch (e) {
             return error(e, req, res)
         }
