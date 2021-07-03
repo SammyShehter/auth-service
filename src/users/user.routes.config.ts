@@ -34,8 +34,6 @@ export class UsersRoutes extends CommonRoutesConfig {
         this.app
             .route('/registration')
             .all(
-                CommonMiddleware.auth, // main auth controller(apikey or userToken check)
-                CommonMiddleware.authRole(['ADMIN', 'SERVER']),
                 check('username').notEmpty().trim().escape(),
                 check('email').isEmail().normalizeEmail(),
                 check('portal').notEmpty().trim().escape(),

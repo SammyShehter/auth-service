@@ -46,9 +46,9 @@ class UserController {
         res: express.Response
     ) => {
         try {
-            const { username, email, portal, password, role } = req.body
+            const { username, email, portal, password } = req.body
             const hash = bcrypt.hashSync(password, saltRounds)
-            const userRole = await RoleModel.findOne({ value: role })
+            const userRole = await RoleModel.findOne({ value: `USER` })
             if(!userRole) throw new Error('Role is incorrect')
             const newUser = new UserModel({
                 username,
