@@ -47,6 +47,13 @@ export class UsersRoutes extends CommonRoutesConfig {
                 UsersMiddleware.checkNewUserExists
             )
             .post(UsersController.registration)
+
+        this.app
+            .route('/loadUser')
+            .all(
+                CommonMiddleware.auth
+            )
+            .get(UsersController.loadUser)
         return this.app
     }
 }

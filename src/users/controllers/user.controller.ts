@@ -54,7 +54,7 @@ class UserController {
             const hash = bcrypt.hashSync(password, saltRounds)
             const userRole = await RoleModel.findOne({ value: `USER` })
             if (!userRole) throw new Error('Role is incorrect')
-            const newUser = new UserModel({
+            const newUser: any = new UserModel({
                 username,
                 email,
                 password: hash,
@@ -69,6 +69,17 @@ class UserController {
             return res
                 .status(200)
                 .json({ message: `${username} user was created!`, token })
+        } catch (e) {
+            return error(e, req, res)
+        }
+    }
+
+    public loadUser = async (
+        req: express.Request,
+        res: express.Response
+    ) => {
+        try {
+            return res.status(200).send(req.user)
         } catch (e) {
             return error(e, req, res)
         }

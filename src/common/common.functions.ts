@@ -5,7 +5,7 @@ const date = (): string => {
 }
 
 export const error = (
-    error: Error,
+    error: any,
     req: express.Request,
     res: express.Response,
     status: number = 400
