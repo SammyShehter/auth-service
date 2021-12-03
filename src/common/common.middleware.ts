@@ -1,10 +1,8 @@
 import express from 'express'
 import { error } from './common.functions'
 import debug from 'debug'
-import mongoose from 'mongoose'
 import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
-import { decodedUser } from './common.types'
 
 const log: debug.IDebugger = debug('app:common-middleware')
 
@@ -72,7 +70,7 @@ class CommonMiddleware {
             if (!token) {
                 throw new Error(`No token provided`)
             }
-            const decodedData: any = jwt.verify( //weird error
+            const decodedData = jwt.verify(
                 token,
                 process.env.JWT_TOKEN
             )

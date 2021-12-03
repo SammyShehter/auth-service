@@ -1,28 +1,72 @@
 import jwt from 'jsonwebtoken'
 import debug from 'debug'
-import { user, parsedUsers } from '../types/user.types'
-import { UserModel } from '../models/user.model'
+import bcrypt from 'bcrypt'
+import {
+    User,
+    ParsedUsers,
+    Credentials,
+    RegCredentials,
+} from '../types/user.type'
+import UsersDao from '../daos/user.dao'
 
 const log: debug.IDebugger = debug('app:user-service')
 
 class UsersService {
-    generateAccessToken = (id: string, roles:string[]): string => {
-        const payload = {
-            id,
-            roles
-        }
+    private cryptoService: any
+    private saltRounds: number
 
-        return jwt.sign(payload, process.env.JWT_TOKEN, {expiresIn: '24h'})
+    constructor() {
+        this.cryptoService = bcrypt
+        this.saltRounds = 15
     }
 
-    getAllUsers = async (): Promise<parsedUsers> => {
-        const users = await UserModel.find().lean()
-        return users.map((user: user) => {
-            delete user.password
-            delete user._id
+    private generateAccessToken = (id: string, roles: string[]): string => {
+        const payload = {
+            id,
+            roles,
+        }
 
-            return user
+        return jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: '24h' })
+    }
+
+    public getAllUsers = async (): Promise<ParsedUsers> => {
+        return UsersDao.getAllUsers()
+    }
+
+    public login = async (credentials: Credentials) => {
+        const { username, password } = credentials
+        const user = await UsersDao.findUser(username)
+        if (!user) {
+            throw new Error(
+                `One or more fields are incorrect, please review your request`
+            )
+        }
+        const validatePassword = this.cryptoService.compareSync(
+            password,
+            user.password
+        )
+        if (!validatePassword) {
+            throw new Error(
+                `One or more fields are incorrect, please review your request`
+            )
+        }
+        const token = this.generateAccessToken(user._id, user.roles)
+
+        return token
+    }
+
+    public registration = async (regCredentials: RegCredentials) => {
+        const { username, email, portal, password } = regCredentials
+        const hash = bcrypt.hashSync(password, this.saltRounds)
+        const newUser: User = await UsersDao.addUser({
+            username,
+            email,
+            password: hash,
+            portals: [portal],
+            roles: ['61aa630de5f9b4a5fa29f9c6'], //USER
         })
+        const token = this.generateAccessToken(newUser._id, newUser.roles)
+        return { username, token }
     }
 }
 

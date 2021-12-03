@@ -50,3 +50,6 @@ Thumbs.db
 
 .env
 ecosystem.config.js
+
+#database stuff
+data

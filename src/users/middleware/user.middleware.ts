@@ -1,7 +1,7 @@
 import debug from 'debug'
 import express from 'express'
 import { error } from '../../common/common.functions'
-import { UserModel } from '../models/user.model'
+import UsersDao from '../daos/user.dao'
 
 const log: debug.IDebugger = debug('app:user-middleware')
 
@@ -36,22 +36,22 @@ export class UsersMiddleware {
         }
     }
 
-    public validateUsersExists = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-    ) => {
-        try {
-            const { storeCode } = req.params
-            const userExists = await UserModel.find({ storeCode })
-            if (!userExists) {
-                throw new Error('User does not exists')
-            }
-            next()
-        } catch (e) {
-            error(e, req, res)
-        }
-    }
+    // public validateUsersExists = async (
+    //     req: express.Request,
+    //     res: express.Response,
+    //     next: express.NextFunction
+    // ) => {
+    //     try {
+    //         const { storeCode } = req.params
+    //         const userExists = await UserModel.find({ storeCode })
+    //         if (!userExists) {
+    //             throw new Error('User does not exists')
+    //         }
+    //         next()
+    //     } catch (e) {
+    //         error(e, req, res)
+    //     }
+    // }
 
     public validatePatch = async (
         req: express.Request,
@@ -90,14 +90,14 @@ export class UsersMiddleware {
         }
     }
 
-    public checkNewUserExists = async (
+    public checkUserExists = async (
         req: express.Request,
         res: express.Response,
         next: express.NextFunction
     ) => {
         try {
             const {username} = req.body
-            const candidate = await UserModel.findOne({username})
+            const candidate = await UsersDao.findUser(username)
             if(candidate){
                 throw new Error('User already exists!')
             }
