@@ -35,7 +35,14 @@ export class UsersRoutes extends CommonRoutesConfig {
                 UsersMiddleware.checkUserExists
             )
             .post(UsersController.registration)
-
+        this.app
+            .route('/validation')
+            .all(
+                CommonMiddleware.senderCheck,
+                CommonMiddleware.apiKeyAuth,
+                CommonMiddleware.authRole(['SERVER']),
+                
+            )
         // this.app
         //     .route('/loadUser')
         //     .all(CommonMiddleware.auth)

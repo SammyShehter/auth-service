@@ -40,7 +40,7 @@ class CommonMiddleware {
         }
     }
 
-    private apiKeyAuth = async (
+    public apiKeyAuth = async (
         req: express.Request,
         res: express.Response,
         next: express.NextFunction
@@ -106,6 +106,20 @@ class CommonMiddleware {
             } catch (e) {
                 error(e, req, res, 401)
             }
+        }
+    }
+
+    senderCheck = async (
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        try {
+            // Get the request adress
+            // Match it to the allowed list
+            next() 
+        } catch (e) {
+            error(e, req, res)
         }
     }
 
