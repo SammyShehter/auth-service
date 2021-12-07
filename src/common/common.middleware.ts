@@ -115,8 +115,10 @@ class CommonMiddleware {
         next: express.NextFunction
     ) => {
         try {
+            
             // Get the request adress
-            // Match it to the allowed list
+            // Match it to the allowed list of senders,
+            // save to req.sender name of service
             next() 
         } catch (e) {
             error(e, req, res)

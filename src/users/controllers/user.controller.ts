@@ -43,6 +43,18 @@ class UserController {
         }
     }
 
+    public validateUser = async (
+        req: express.Request,
+        res: express.Response
+    ) => {
+        try {
+            const {userName} = await UsersService.validateUser(req.body.token)
+
+            return res.status(200).json({message: `${userName} made valid request`})
+        } catch (e) {
+            error(e, req, res)
+        }
+    }
     // public loadUser = async (req: express.Request, res: express.Response) => {
     //     try {
     //         return res.status(200).send(req.user)

@@ -27,13 +27,20 @@ class UsersValidator extends CommonValidator {
             .notEmpty()
             .trim()
             .escape()
-
             .withMessage(`Username can't be empty`),
         check('password')
             .notEmpty()
             .trim()
             .escape()
             .withMessage('Password cannot be empty'),
+    ])
+
+    innerRequestCheck = this.validate([
+        check('token')
+            .notEmpty()
+            .trim()
+            .escape()
+            .withMessage(`Token can't be empty`),
     ])
 }
 

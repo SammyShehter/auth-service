@@ -5,6 +5,7 @@ import UsersController from './controllers/user.controller'
 import UsersMiddleware from './middleware/user.middleware'
 import { check } from 'express-validator'
 import UserValidator from './validators/user.validator'
+import userMiddleware from './middleware/user.middleware'
 
 export class UsersRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
@@ -41,8 +42,10 @@ export class UsersRoutes extends CommonRoutesConfig {
                 CommonMiddleware.senderCheck,
                 CommonMiddleware.apiKeyAuth,
                 CommonMiddleware.authRole(['SERVER']),
-                
+                UserValidator.innerRequestCheck,
+                userMiddleware.checkUserExists
             )
+            .post(UsersController.validateUser)
         // this.app
         //     .route('/loadUser')
         //     .all(CommonMiddleware.auth)

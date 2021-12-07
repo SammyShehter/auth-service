@@ -14,10 +14,12 @@ const log: debug.IDebugger = debug('app:user-service')
 class UsersService {
     private cryptoService: any
     private saltRounds: number
+    private jwt: any
 
     constructor() {
         this.cryptoService = bcrypt
         this.saltRounds = 15
+        this.jwt = jwt
     }
 
     private generateAccessToken = (id: string, roles: string[]): string => {
@@ -26,8 +28,10 @@ class UsersService {
             roles,
         }
 
-        return jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: '24h' })
+        return this.jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: '24h' })
     }
+
+    private parseJwt = (jwtToken: string) => this.jwt.decode(jwtToken)
 
     public getAllUsers = async (): Promise<ParsedUsers> => {
         return UsersDao.getAllUsers()
@@ -68,6 +72,11 @@ class UsersService {
         const token = this.generateAccessToken(newUser._id, newUser.roles)
         return { username, token }
     }
+
+    public validateUser = async (userToken: string) => {
+        const decodedUser = this.parseJwt(userToken)
+        return {userName: "x"}
+    } 
 }
 
 export default new UsersService()
