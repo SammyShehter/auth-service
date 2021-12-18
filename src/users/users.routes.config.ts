@@ -3,9 +3,7 @@ import { CommonRoutesConfig } from '../common/common.routes.config'
 import CommonMiddleware from '../common/common.middleware'
 import UsersController from './controllers/user.controller'
 import UsersMiddleware from './middleware/user.middleware'
-import { check } from 'express-validator'
 import UserValidator from './validators/user.validator'
-import userMiddleware from './middleware/user.middleware'
 
 export class UsersRoutes extends CommonRoutesConfig {
     constructor(app: express.Application) {
@@ -33,7 +31,7 @@ export class UsersRoutes extends CommonRoutesConfig {
             .all(
                 UserValidator.registrationChecks,
                 UsersMiddleware.ecoSystemUser(UsersRoutes.allowedPortal),
-                UsersMiddleware.checkUserExists
+                UsersMiddleware.checkUserNotExists
             )
             .post(UsersController.registration)
         this.app
@@ -42,14 +40,9 @@ export class UsersRoutes extends CommonRoutesConfig {
                 CommonMiddleware.senderCheck,
                 CommonMiddleware.apiKeyAuth,
                 CommonMiddleware.authRole(['SERVER']),
-                UserValidator.innerRequestCheck,
-                userMiddleware.checkUserExists
+                UserValidator.innerRequestCheck
             )
             .post(UsersController.validateUser)
-        // this.app
-        //     .route('/loadUser')
-        //     .all(CommonMiddleware.auth)
-        //     .get(UsersController.loadUser)
         
         return this.app
     }

@@ -8,6 +8,7 @@ import {
     RegCredentials,
 } from '../types/user.type'
 import UsersDao from '../daos/user.dao'
+import { Role } from '../types/role.type'
 
 const log: debug.IDebugger = debug('app:user-service')
 
@@ -22,10 +23,10 @@ class UsersService {
         this.jwt = jwt
     }
 
-    private generateAccessToken = (id: string, roles: string[]): string => {
+    private generateAccessToken = (id: string, role: string): string => {
         const payload = {
             id,
-            roles,
+            role,
         }
 
         return this.jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: '24h' })
@@ -54,7 +55,7 @@ class UsersService {
                 `One or more fields are incorrect, please review your request`
             )
         }
-        const token = this.generateAccessToken(user._id, user.roles)
+        const token = this.generateAccessToken(user._id, user.role as string)
 
         return token
     }
@@ -67,15 +68,15 @@ class UsersService {
             email,
             password: hash,
             portals: [portal],
-            roles: ['61aa630de5f9b4a5fa29f9c6'], //USER
+            role: process.env.USER,
         })
-        const token = this.generateAccessToken(newUser._id, newUser.roles)
+        const token = this.generateAccessToken(newUser._id, newUser.role as string)
         return { username, token }
     }
 
     public validateUser = async (userToken: string) => {
-        const decodedUser = this.parseJwt(userToken)
-        return {userName: "x"}
+        const {id} = this.parseJwt(userToken)
+        return UsersDao.findUserById(id)
     } 
 }
 

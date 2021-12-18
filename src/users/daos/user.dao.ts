@@ -3,6 +3,7 @@ import { CreateUserDto } from '../dto/create.user.dto'
 import MongooseService from '../../common/common.services'
 import { ParsedUsers, User } from '../types/user.type'
 import { Model } from 'mongoose'
+import { Role } from '../types/role.type'
 
 const log: debug.IDebugger = debug('app:users-dao')
 
@@ -18,7 +19,7 @@ class UsersDao {
                 password: { type: String, require: true },
                 email: { type: String, unique: true },
                 portals: [{ type: String, required: true }],
-                roles: [{ type: ObjectId, ref: 'Role' }],
+                role: { type: ObjectId, ref: 'Roles' },
             },
             { timestamps: true, versionKey: false }
         )
@@ -44,6 +45,21 @@ class UsersDao {
 
     async findUser(username: string): Promise<User> {
         return this.userStorage.findOne({ username }).exec()
+    }
+
+    async findUserById(id: string): Promise<User> {
+        const user: any = await this.userStorage
+            .findOne(
+                { _id: id },
+                { _id: 0, password: 0, createdAt: 0, updatedAt: 0 }
+            )
+            .populate({ path: 'role', select: 'value -_id' })
+            .lean()
+            .exec()
+
+        user.role = user.role.value
+
+        return user
     }
 
     async removeUser(username: string): Promise<boolean> {

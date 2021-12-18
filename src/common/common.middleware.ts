@@ -3,6 +3,8 @@ import { error } from './common.functions'
 import debug from 'debug'
 import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
+import RolesDao from '../users/daos/role.dao'
+import { Role } from '../users/types/role.type'
 
 const log: debug.IDebugger = debug('app:common-middleware')
 
@@ -30,11 +32,12 @@ class CommonMiddleware {
         next: express.NextFunction
     ) => {
         try {
-            if (req.headers.authorization) return this.authUserToken(req, res, next)
+            if (req.headers.authorization)
+                return this.authUserToken(req, res, next)
 
             if (req.headers.apikey) return this.apiKeyAuth(req, res, next)
-    
-            throw new Error('No authentication provided')   
+
+            throw new Error('No authentication provided')
         } catch (e) {
             error(e, req, res, 401)
         }
@@ -46,10 +49,10 @@ class CommonMiddleware {
         next: express.NextFunction
     ) => {
         try {
-            const apikey = req.headers.apikey
-            if(apikey === process.env.APIKEY){
+            const apikey = req.headers.inner_call
+            if (apikey === process.env.APIKEY) {
                 req.user = {
-                    roles: ['SERVER']
+                    role: 'SERVER',
                 }
                 next()
             } else {
@@ -70,10 +73,7 @@ class CommonMiddleware {
             if (!token) {
                 throw new Error(`No token provided`)
             }
-            const decodedData = jwt.verify(
-                token,
-                process.env.JWT_TOKEN
-            )
+            const decodedData = jwt.verify(token, process.env.JWT_TOKEN)
             req.user = decodedData
             next()
         } catch (e) {
@@ -88,11 +88,19 @@ class CommonMiddleware {
             next: express.NextFunction
         ) => {
             try {
-                const roles: string[] = req.user.roles
+                const userRole: Role = {
+                    value: null,
+                }
+                if (req.user.role === 'SERVER') {
+                    userRole.value = 'SERVER'
+                } else {
+                    const { value } = await RolesDao.findRoleById(req.user.role)
+                    userRole.value = value
+                }
 
                 let hasPermission: boolean = false
                 allowedRoles.forEach((role) => {
-                    if (roles.includes(role)) {
+                    if (role === userRole.value) {
                         hasPermission = true
                     }
                 })
@@ -115,11 +123,10 @@ class CommonMiddleware {
         next: express.NextFunction
     ) => {
         try {
-            
             // Get the request adress
             // Match it to the allowed list of senders,
             // save to req.sender name of service
-            next() 
+            next()
         } catch (e) {
             error(e, req, res)
         }

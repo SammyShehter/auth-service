@@ -2,6 +2,7 @@ import express from 'express'
 import { error } from '../../common/common.functions'
 import debug from 'debug'
 import UsersService from '../services/user.service'
+import { User } from '../types/user.type'
 
 const log: debug.IDebugger = debug('app:user-controller')
 
@@ -48,20 +49,13 @@ class UserController {
         res: express.Response
     ) => {
         try {
-            const {userName} = await UsersService.validateUser(req.body.token)
+            const user: User = await UsersService.validateUser(req.body.token)
 
-            return res.status(200).json({message: `${userName} made valid request`})
+            return res.status(200).json({user})
         } catch (e) {
             error(e, req, res)
         }
     }
-    // public loadUser = async (req: express.Request, res: express.Response) => {
-    //     try {
-    //         return res.status(200).send(req.user)
-    //     } catch (e) {
-    //         return error(e, req, res)
-    //     }
-    // }
 }
 
 export default new UserController()

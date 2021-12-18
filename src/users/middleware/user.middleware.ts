@@ -36,23 +36,6 @@ export class UsersMiddleware {
         }
     }
 
-    // public validateUsersExists = async (
-    //     req: express.Request,
-    //     res: express.Response,
-    //     next: express.NextFunction
-    // ) => {
-    //     try {
-    //         const { storeCode } = req.params
-    //         const userExists = await UserModel.find({ storeCode })
-    //         if (!userExists) {
-    //             throw new Error('User does not exists')
-    //         }
-    //         next()
-    //     } catch (e) {
-    //         error(e, req, res)
-    //     }
-    // }
-
     public validatePatch = async (
         req: express.Request,
         res: express.Response,
@@ -90,7 +73,7 @@ export class UsersMiddleware {
         }
     }
 
-    public checkUserExists = async (
+    public checkUserNotExists = async (
         req: express.Request,
         res: express.Response,
         next: express.NextFunction

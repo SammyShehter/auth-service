@@ -3,7 +3,7 @@ import MongooseService from '../../common/common.services'
 import { Model } from 'mongoose'
 import { Role } from '../types/role.type'
 
-const log: debug.IDebugger = debug('app:roless-dao')
+const log: debug.IDebugger = debug('app:roles-dao')
 
 class RolesDao {
     private roleStorage: Model<Role>
@@ -29,8 +29,8 @@ class RolesDao {
         log('Created new instance of RolesDao')
     }
 
-    async findRole(value: string) {
-        return this.roleStorage.findOne({ value }).exec()
+    async findRoleById(_id: string) {
+        return this.roleStorage.findOne({ _id }, {_id: 0}).exec()
     }
 }
 

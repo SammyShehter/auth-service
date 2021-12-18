@@ -3,5 +3,5 @@ export interface CreateUserDto {
     email: string
     password: string
     portals: Array<string>
-    roles: Array<string>
+    role: string
 }
