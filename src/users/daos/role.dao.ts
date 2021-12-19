@@ -29,7 +29,11 @@ class RolesDao {
         log('Created new instance of RolesDao')
     }
 
-    async findRoleById(_id: string) {
+    async findRole(value: string): Promise<Role> {
+        return this.roleStorage.findOne({ value }, {value: 0}).exec()
+    }
+
+    async findRoleById(_id: string): Promise<Role> {
         return this.roleStorage.findOne({ _id }, {_id: 0}).exec()
     }
 }

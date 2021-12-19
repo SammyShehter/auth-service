@@ -9,6 +9,7 @@ import {
 } from '../types/user.type'
 import UsersDao from '../daos/user.dao'
 import { Role } from '../types/role.type'
+import RoleDao from '../daos/role.dao'
 
 const log: debug.IDebugger = debug('app:user-service')
 
@@ -63,12 +64,13 @@ class UsersService {
     public registration = async (regCredentials: RegCredentials) => {
         const { username, email, portal, password } = regCredentials
         const hash = bcrypt.hashSync(password, this.saltRounds)
+        const {_id} = await RoleDao.findRole('USER')
         const newUser: User = await UsersDao.addUser({
             username,
             email,
             password: hash,
             portals: [portal],
-            role: process.env.USER,
+            role: _id,
         })
         const token = this.generateAccessToken(newUser._id, newUser.role as string)
         return { username, token }
