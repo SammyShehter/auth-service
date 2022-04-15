@@ -1,15 +1,23 @@
-import express from 'express'
+import {Request, Response} from 'express'
 
 const date = (): string => {
     return new Date().toLocaleString('he-IL')
 }
 
-export const error = (
+export function handleSuccess(data: any, req: Request,
+    res: Response,
+    status: number = 200): Response {
+    console.log('Successful request');
+    return res.status(status).json({ message: 'SUCCESS', data })
+}
+
+
+export const handleError = (
     error: any,
-    req: express.Request,
-    res: express.Response,
+    req: Request,
+    res: Response,
     status: number = 400
-): express.Response => {
+): Response => {
     const errorLog: string[] | string = error.stack
         ? error.stack.split(' at ')
         : 'Unknow Error'
@@ -25,5 +33,5 @@ export const error = (
     ${errorLog[0]} 
     
     `)
-    return res.status(status).json({ errors: [{ msg: error.message }] })
+    return res.status(status).json({ message: 'FAILURE' ,errors: [{ msg: error.message }] })
 }

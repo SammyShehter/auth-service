@@ -1,40 +1,34 @@
 import debug from 'debug'
 import express from 'express'
-import { error } from '../../common/common.functions'
+import { handleError } from '../../common/common.functions'
 import UsersDao from '../daos/user.dao'
 
 const log: debug.IDebugger = debug('app:user-middleware')
 
 export class UsersMiddleware {
-    private readonly stringFields: string[] = [
-        'name',
-        'storeCode',
-        'gamesBundles',
-        'pricing',
-        'imageURL',
-    ]
+    private readonly stringFields: string[] = []
 
-    public checkFields = (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-    ) => {
-        try {
-            const reqLength: number = Object.getOwnPropertyNames(
-                req.body
-            ).length
-            if (reqLength !== this.stringFields.length) {
-                throw new Error(
-                    `Request body is illegal. Request has ${
-                        reqLength > this.stringFields.length ? 'more' : 'less'
-                    } fields, than intended. Please reconsider your request`
-                )
-            }
-            this.validatePatch(req, res, next)
-        } catch (e) {
-            error(e, req, res)
-        }
-    }
+    // public checkFields = (
+    //     req: express.Request,
+    //     res: express.Response,
+    //     next: express.NextFunction
+    // ) => {
+    //     try {
+    //         const reqLength: number = Object.getOwnPropertyNames(
+    //             req.body
+    //         ).length
+    //         if (reqLength !== this.stringFields.length) {
+    //             throw new Error(
+    //                 `Request body is illegal. Request has ${
+    //                     reqLength > this.stringFields.length ? 'more' : 'less'
+    //                 } fields, than intended. Please reconsider your request`
+    //             )
+    //         }
+    //         this.validatePatch(req, res, next)
+    //     } catch (e) {
+    //         handleError(e, req, res)
+    //     }
+    // }
 
     public validatePatch = async (
         req: express.Request,
@@ -52,7 +46,7 @@ export class UsersMiddleware {
             }
             next()
         } catch (e) {
-            error(e, req, res)
+            handleError(e, req, res)
         }
     }
 
@@ -69,7 +63,7 @@ export class UsersMiddleware {
                 throw new Error('This type of portal is not supported')
             }
         } catch (e) {
-            error(e, req, res, 400)
+            handleError(e, req, res, 400)
         }
     }
 
@@ -86,7 +80,7 @@ export class UsersMiddleware {
             }
             next()
         } catch (e) {
-            return error(e, req, res, 401)
+            return handleError(e, req, res, 401)
         }
     }
 }

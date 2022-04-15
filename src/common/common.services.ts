@@ -5,15 +5,10 @@ const log: debug.IDebugger = debug('app:mongoose-service')
 
 class MongooseService {
     private count = 0
-
-    // private mongooseOptions = {
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true,
-    //     useFindAndModify: false,
-    // }
+    retrySeconds = 5
 
     constructor() {
-        this.connectWithRetry()
+        setTimeout(this.connectWithRetry, this.retrySeconds * 1000)
     }
 
     public getMongoose() {
@@ -28,13 +23,12 @@ class MongooseService {
                 log('MongoDB is connected')
             })
             .catch((err) => {
-                const retrySeconds = 5
                 log(
                     `MongoDB connection failed, will retry ${++this
-                        .count} after ${retrySeconds} seconds`,
+                        .count} after ${this.retrySeconds} seconds`,
                     err
                 )
-                setTimeout(this.connectWithRetry, retrySeconds * 1000)
+                setTimeout(this.connectWithRetry, this.retrySeconds * 1000)
             })
     }
 }

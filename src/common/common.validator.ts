@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator"
-import express from 'express' 
+import {Request, Response, NextFunction} from 'express' 
 
 export default class CommonValidator {
     customValidationResult = validationResult.withDefaults({
@@ -13,9 +13,9 @@ export default class CommonValidator {
 
     validate = (validations: any) => {
         return async (
-            req: express.Request,
-            res: express.Response,
-            next: express.NextFunction
+            req: Request,
+            res: Response,
+            next: NextFunction
         ) => {
             for (let validation of validations) {
                 const result = await validation.run(req)
@@ -26,8 +26,7 @@ export default class CommonValidator {
             if (errors.isEmpty()) {
                 return next()
             }
-
-            res.status(400).json({ errors: errors.array() })
+            res.status(400).json({ message: 'FAILURE', data: errors.array() })
         }
     }
 }

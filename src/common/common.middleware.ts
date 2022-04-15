@@ -1,5 +1,5 @@
-import express from 'express'
-import { error } from './common.functions'
+import {Request, Response, NextFunction} from 'express'
+import { handleError } from './common.functions'
 import debug from 'debug'
 import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
@@ -10,9 +10,9 @@ const log: debug.IDebugger = debug('app:common-middleware')
 
 class CommonMiddleware {
     validatorErrors = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
+        req: Request,
+        res: Response,
+        next: NextFunction
     ) => {
         try {
             const errors = validationResult(req)
@@ -22,31 +22,31 @@ class CommonMiddleware {
                 next()
             }
         } catch (e) {
-            error(e, req, res)
+            handleError(e, req, res)
         }
     }
 
     auth = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
+        req: Request,
+        res: Response,
+        next: NextFunction
     ) => {
         try {
             if (req.headers.authorization)
                 return this.authUserToken(req, res, next)
 
             if (req.headers.apikey) return this.apiKeyAuth(req, res, next)
-
+            
             throw new Error('No authentication provided')
         } catch (e) {
-            error(e, req, res, 401)
+            handleError(e, req, res, 401)
         }
     }
 
     public apiKeyAuth = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
+        req: Request,
+        res: Response,
+        next: NextFunction
     ) => {
         try {
             const apikey = req.headers.inner_call
@@ -59,14 +59,14 @@ class CommonMiddleware {
                 throw new Error('Api key is not correct')
             }
         } catch (e) {
-            error(e, req, res, 401)
+            handleError(e, req, res, 401)
         }
     }
 
     private authUserToken = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
+        req: Request,
+        res: Response,
+        next: NextFunction
     ) => {
         try {
             const token = req.headers.authorization?.split(' ')[1]
@@ -77,15 +77,15 @@ class CommonMiddleware {
             req.user = decodedData
             next()
         } catch (e) {
-            error(e, req, res, 401)
+            handleError(e, req, res, 401)
         }
     }
 
     authRole = (allowedRoles: string[]) => {
         return async (
-            req: express.Request,
-            res: express.Response,
-            next: express.NextFunction
+            req: Request,
+            res: Response,
+            next: NextFunction
         ) => {
             try {
                 const userRole: Role = {
@@ -112,15 +112,15 @@ class CommonMiddleware {
                     next()
                 }
             } catch (e) {
-                error(e, req, res, 401)
+                handleError(e, req, res, 401)
             }
         }
     }
 
     senderCheck = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
+        req: Request,
+        res: Response,
+        next: NextFunction
     ) => {
         try {
             // Get the request adress
@@ -128,14 +128,14 @@ class CommonMiddleware {
             // save to req.sender name of service
             next()
         } catch (e) {
-            error(e, req, res)
+            handleError(e, req, res)
         }
     }
 
     trimStrings = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
+        req: Request,
+        res: Response,
+        next: NextFunction
     ) => {
         try {
             //Trim all strings coming
@@ -147,7 +147,7 @@ class CommonMiddleware {
 
             next()
         } catch (e) {
-            error(e, req, res)
+            handleError(e, req, res)
         }
     }
 }

@@ -5,7 +5,8 @@ import { decodedUser } from '../../src/common/common.types';
 declare global {
     namespace Express {
         interface Request {
-            user: decodedUser
+            user: decodedUser,
+            correlation_id: string
         }
     }
 }

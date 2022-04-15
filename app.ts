@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv'
 import * as expressWinston from 'express-winston'
 import * as http from 'http'
 import * as winston from 'winston'
+import * as crypto from "crypto";
 import express from 'express'
 import cors from 'cors'
 import debug from 'debug'
@@ -19,8 +20,6 @@ const debugLog: debug.IDebugger = debug('app')
 app.use(express.json())
 app.use(cors())
 
-// here we are preparing the expressWinston logging middleware configuration,
-// which will automatically log all HTTP requests handled by Express.js
 const loggerOptions: expressWinston.LoggerOptions = {
     transports: [new winston.transports.Console()],
     format: winston.format.combine(
@@ -47,8 +46,13 @@ const errorLoggerOptions: expressWinston.ErrorLoggerOptions = {
 }
 
 // initialize the logger with the above configuration
-app.use(expressWinston.logger(loggerOptions))
-app.use(expressWinston.errorLogger(errorLoggerOptions))
+app.use(expressWinston.logger(loggerOptions)) //TODO solve express-winston logger!
+app.use(expressWinston.errorLogger(errorLoggerOptions)) //TODO solve express-winston logger!
+// app.use(function (req, _, next) {
+//     console.log('Time:', Date.now());
+//     req.correlation_id = crypto.randomUUID()
+//     next()
+// });
 
 // here we are crashing on unhandled errors and spitting out a stack trace,
 // but only when in debug mode
