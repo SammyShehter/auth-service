@@ -30,25 +30,25 @@ export class UsersMiddleware {
     //     }
     // }
 
-    public validatePatch = async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-    ) => {
-        try {
-            for (let prop in req.body) {
-                let fieldExists = this.stringFields.includes(prop)
-                if (!fieldExists) {
-                    throw new Error(
-                        `${prop} is not taken into account by the program, please reconsider your request`
-                    )
-                }
-            }
-            next()
-        } catch (e) {
-            handleError(e, req, res)
-        }
-    }
+    // public validatePatch = async (
+    //     req: express.Request,
+    //     res: express.Response,
+    //     next: express.NextFunction
+    // ) => {
+    //     try {
+    //         for (let prop in req.body) {
+    //             let fieldExists = this.stringFields.includes(prop)
+    //             if (!fieldExists) {
+    //                 throw new Error(
+    //                     `${prop} is not taken into account by the program, please reconsider your request`
+    //                 )
+    //             }
+    //         }
+    //         next()
+    //     } catch (e) {
+    //         handleError(e, req, res)
+    //     }
+    // }
 
     public ecoSystemUser = (allowedPortal: string[]) => async (
         req: express.Request,
@@ -57,7 +57,8 @@ export class UsersMiddleware {
     ) => {
         try {
             const portalUser = req.body.portal
-            if(portalUser &&  allowedPortal.includes(portalUser)){
+            
+            if(portalUser && allowedPortal.includes(portalUser)){
                 next()
             } else {
                 throw new Error('This type of portal is not supported')

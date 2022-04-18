@@ -6,11 +6,9 @@ import UsersMiddleware from './middleware/user.middleware'
 import UserValidator from './validators/user.validator'
 
 export class UsersRoutes extends CommonRoutesConfig {
-    private allowedPortal: Array<string>
 
     constructor(app: express.Application) {
         super(app, 'UsersRoutes')
-        this.allowedPortal = ['mafia', 'blogue']
     }
 
     configureRoutes() {
@@ -31,7 +29,7 @@ export class UsersRoutes extends CommonRoutesConfig {
             .route('/registration')
             .all(
                 UserValidator.registrationChecks,
-                UsersMiddleware.ecoSystemUser(this.allowedPortal),
+                UsersMiddleware.ecoSystemUser(['mafia', 'blogue']),
                 UsersMiddleware.checkUserNotExists
             )
             .post(UsersController.registration)

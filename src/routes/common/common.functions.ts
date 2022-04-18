@@ -1,4 +1,5 @@
 import {Request, Response} from 'express'
+import {ErrorCodes} from '../../utils/error-codes'
 
 const date = (): string => {
     return new Date().toLocaleString('he-IL')
@@ -22,7 +23,7 @@ export const handleError = (
         ? error.stack.split(' at ')
         : 'Unknow Error'
 
-    console.log(`
+    console.log(`\n
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             REQUEST ${status === 400 ? 'ERROR' : 'WARNING'}!     
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -33,14 +34,14 @@ export const handleError = (
     ${errorLog[0]} 
     
     `)
-    return res.status(status).json({ message: 'FAILURE' ,errors: [{ msg: error.message }] })
+    return res.status(status).json({ message: 'FAILURE' ,errors: [{ msg: ErrorCodes.GENERAL_ERROR }] })
 }
 
 export const handle404 = (
     _: Request,
     res: Response
 ): Response => {
-    console.log(`
+    console.log(`\n
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
               404 REQUEST
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
