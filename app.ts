@@ -8,6 +8,7 @@ import cors from 'cors'
 import debug from 'debug'
 import { CommonRoutesConfig } from './src/common/common.routes.config'
 import { UsersRoutes } from './src/users/users.routes.config'
+import { handle404 } from './src/common/common.functions';
 
 dotenv.config()
 
@@ -67,6 +68,9 @@ if (process.env.DEBUG) {
 
 // Creating instace of Routes
 routes.push(new UsersRoutes(app))
+
+//Handle 404
+app.use(handle404);
 
 // Start server
 server.listen(port, () => {

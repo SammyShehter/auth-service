@@ -35,3 +35,19 @@ export const handleError = (
     `)
     return res.status(status).json({ message: 'FAILURE' ,errors: [{ msg: error.message }] })
 }
+
+export const handle404 = (
+    _: Request,
+    res: Response
+): Response => {
+    console.log(`
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+              404 REQUEST
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    Request Time: ${date()}
+    
+    `)
+    return res.status(404).json({ message: 'FAILURE' ,errors: [{ msg: "404 not found" }] })
+}
+

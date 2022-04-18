@@ -1,0 +1,9 @@
+{
+    "package": "./package.json",
+    "slow": 1500,
+    "_timeout": 20000,
+    "recursive": true,
+    "require": ["source-map-support/register", "ts-node/register"],
+    "ui": "bdd",
+    "exit": true
+}
