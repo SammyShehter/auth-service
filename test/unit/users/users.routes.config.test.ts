@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import express from 'express'
-import { UsersRoutes } from '../../../src/users/users.routes.config'
+import { UsersRoutes } from '../../../src/routes/users/users.routes.config'
 
 describe("UsersRoutes", () => {
     const app: express.Application = express()
