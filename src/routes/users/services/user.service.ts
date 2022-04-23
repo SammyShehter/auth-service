@@ -8,7 +8,6 @@ import {
     RegCredentials,
 } from '../types/user.type'
 import UsersDao from '../daos/user.dao'
-import { Role } from '../types/role.type'
 import RoleDao from '../daos/role.dao'
 
 const log: debug.IDebugger = debug('app:user-service')
@@ -76,10 +75,14 @@ class UsersService {
         return { username, token }
     }
 
-    public validateUser = async (userToken: string) => {
+    public validateUser = async (userId: string) => {
+        return UsersDao.findUserById(userId)
+    }
+
+    public validateInnerCall = async (userToken: string) => {
         const {id} = this.parseJwt(userToken)
         return UsersDao.findUserById(id)
-    } 
+    }
 }
 
 export default new UsersService()

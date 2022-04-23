@@ -48,8 +48,21 @@ class UserController {
         res: Response
     ) => {
         try {
+            const {id} = req.user
+            const user: User = await UsersService.validateUser(id)
+            return handleSuccess(user, req, res)
+        } catch (e) {
+            handleError(e, req, res)
+        }
+    }
+
+    public validateInnerCall = async (
+        req: Request,
+        res: Response
+    ) => {
+        try {
             const userToken: string = req.body.token
-            const user: User = await UsersService.validateUser(userToken)
+            const user: User = await UsersService.validateInnerCall(userToken)
             return handleSuccess(user, req, res)
         } catch (e) {
             handleError(e, req, res)

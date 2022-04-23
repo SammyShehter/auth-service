@@ -36,12 +36,20 @@ export class UsersRoutes extends CommonRoutesConfig {
         this.app
             .route('/validation')
             .all(
-                CommonMiddleware.senderCheck,
-                CommonMiddleware.apiKeyAuth,
-                CommonMiddleware.authRole(['SERVER']),
-                UserValidator.innerRequestCheck
+                CommonMiddleware.auth,
+                CommonMiddleware.authRole(['ADMIN'])
             )
             .post(UsersController.validateUser)
+
+        this.app
+        .route('/innercall')
+        .all(
+            CommonMiddleware.senderCheck,
+            CommonMiddleware.apiKeyAuth,
+            CommonMiddleware.authRole(['SERVER']),
+            UserValidator.innerRequestCheck
+        )
+        .post(UsersController.validateInnerCall)
         
         return this.app
     }

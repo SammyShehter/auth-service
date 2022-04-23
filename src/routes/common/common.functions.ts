@@ -8,14 +8,13 @@ const date = (): string => {
 export function handleSuccess(data: any, req: Request,
     res: Response,
     status: number = 200): Response {
-    console.log('Successful request');
     return res.status(status).json({ message: 'SUCCESS', data })
 }
 
 
 export const handleError = (
     error: any,
-    req: Request,
+    _: Request,
     res: Response,
     status: number = 400
 ): Response => {

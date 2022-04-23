@@ -1,14 +1,16 @@
-import mongoose from 'mongoose'
-import debug from 'debug'
+import mongoose from "mongoose"
+import debug from "debug"
+import { authEvents } from "../../utils/events"
 
-const log: debug.IDebugger = debug('app:mongoose-service')
+const log: debug.IDebugger = debug("app:mongoose-service")
 
 class MongooseService {
-    private count = 0
-    retrySeconds = 5
+    private count: number = 0
+    private retryAttempt: number = 5
+    private retrySeconds: number = 5
 
     constructor() {
-        setTimeout(this.connectWithRetry, this.retrySeconds * 1000)
+        setTimeout(this.connectWithRetry, this.retrySeconds * 200)
     }
 
     public getMongoose() {
@@ -16,16 +18,20 @@ class MongooseService {
     }
 
     connectWithRetry = () => {
-        log('Attemptin to connect to Mongo DB')
+        log("Attemptin to connect to Mongo DB")
         mongoose
             .connect(process.env.MOONGO_CONNECTION_STRING)
             .then(() => {
-                log('MongoDB is connected')
+                authEvents.emit("ready")
+                log("MongoDB is connected")
             })
-            .catch((err) => {
+            .catch(err => {
+                if (this.count > 5) {
+                    process.exit(-1)
+                }
+                this.count++
                 log(
-                    `MongoDB connection failed, will retry ${++this
-                        .count} after ${this.retrySeconds} seconds`,
+                    `MongoDB connection failed, will retry ${this.count}/${this.retryAttempt} attempt after ${this.retrySeconds} seconds`,
                     err
                 )
                 setTimeout(this.connectWithRetry, this.retrySeconds * 1000)
