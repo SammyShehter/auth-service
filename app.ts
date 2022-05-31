@@ -46,14 +46,8 @@ const errorLoggerOptions: expressWinston.ErrorLoggerOptions = {
     ),
 }
 
-// initialize the logger with the above configuration
 app.use(expressWinston.logger(loggerOptions)) //TODO solve express-winston logger!
 app.use(expressWinston.errorLogger(errorLoggerOptions)) //TODO solve express-winston logger!
-// app.use(function (req, _, next) {
-//     console.log('Time:', Date.now());
-//     req.correlation_id = crypto.randomUUID()
-//     next()
-// });
 
 // here we are crashing on unhandled errors and spitting out a stack trace,
 // but only when in debug mode
