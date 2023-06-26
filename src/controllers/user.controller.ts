@@ -1,10 +1,7 @@
 import {Request, Response} from 'express'
-import { handleError, handleSuccess } from '../../common/common.functions'
-import debug from 'debug'
 import UsersService from '../services/user.service'
 import { User } from '../types/user.type'
-
-const log: debug.IDebugger = debug('app:user-controller')
+import { handleError, handleSuccess } from '../utils/common.functions'
 
 class UserController {
     public getAllUsers = async (

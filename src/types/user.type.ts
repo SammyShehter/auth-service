@@ -1,10 +1,9 @@
-import MongooseService from '../../common/common.services'
-const ObjectId = MongooseService.getMongoose().Schema.Types.ObjectId
+import {Types} from 'mongoose'
 
 export type User = {
     _id?: string
     username: string
-    role: string | typeof ObjectId
+    role: string | Types.ObjectId
     email: string
     password?: string
     portals: Array<string>

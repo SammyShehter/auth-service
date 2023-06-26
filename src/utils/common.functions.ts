@@ -1,5 +1,5 @@
 import {Request, Response} from 'express'
-import {ErrorCodes} from '../../utils/error-codes'
+import {ErrorCodes} from './error-codes.util'
 
 const date = (): string => {
     return new Date().toLocaleString('he-IL')

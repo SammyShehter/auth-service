@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import debug from 'debug'
 import bcrypt from 'bcrypt'
 import {
     User,
@@ -7,10 +6,7 @@ import {
     Credentials,
     RegCredentials,
 } from '../types/user.type'
-import UsersDao from '../daos/user.dao'
-import RoleDao from '../daos/role.dao'
-
-const log: debug.IDebugger = debug('app:user-service')
+import MongoService from './mongo.service'
 
 class UsersService {
     private cryptoService: any
@@ -35,12 +31,12 @@ class UsersService {
     private parseJwt = (jwtToken: string) => this.jwt.decode(jwtToken)
 
     public getAllUsers = async (): Promise<ParsedUsers> => {
-        return UsersDao.getAllUsers()
+        return MongoService.getAllUsers()
     }
 
     public login = async (credentials: Credentials) => {
         const { username, password } = credentials
-        const user = await UsersDao.findUser(username)
+        const user = await MongoService.findUser(username)
         if (!user) {
             throw new Error(
                 `One or more fields are incorrect, please review your request`
@@ -63,12 +59,12 @@ class UsersService {
     public registration = async (regCredentials: RegCredentials) => {
         const { username, email, portal, password } = regCredentials
         const hash = bcrypt.hashSync(password, this.saltRounds)
-        const {_id} = await RoleDao.findRole('USER')
-        const newUser: User = await UsersDao.addUser({
+        const {_id} = await MongoService.findRole('ADMIN')
+        const newUser: User = await MongoService.addUser({
             username,
             email,
             password: hash,
-            portals: [portal],
+            portals: [portal || 'blogue'],
             role: _id,
         })
         const token = this.generateAccessToken(newUser._id, newUser.role as string)
@@ -76,12 +72,12 @@ class UsersService {
     }
 
     public validateUser = async (userId: string) => {
-        return UsersDao.findUserById(userId)
+        return MongoService.findUserById(userId)
     }
 
     public validateInnerCall = async (userToken: string) => {
         const {id} = this.parseJwt(userToken)
-        return UsersDao.findUserById(id)
+        return MongoService.findUserById(id)
     }
 }
 

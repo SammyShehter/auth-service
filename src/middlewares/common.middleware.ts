@@ -1,12 +1,9 @@
 import {Request, Response, NextFunction} from 'express'
-import { handleError } from './common.functions'
-import debug from 'debug'
+import { handleError } from '../utils/common.functions'
 import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
-import RolesDao from '../users/daos/role.dao'
-import { Role } from '../users/types/role.type'
-
-const log: debug.IDebugger = debug('app:common-middleware')
+import { Role } from '../types/role.type'
+import MongoServices from '../services/mongo.service'
 
 class CommonMiddleware {
     validatorErrors = async (
@@ -94,7 +91,7 @@ class CommonMiddleware {
                 if (req.user.role === 'SERVER') {
                     userRole.value = 'SERVER'
                 } else {
-                    const { value } = await RolesDao.findRoleById(req.user.role)
+                    const { value } = await MongoServices.findRoleById(req.user.role)
                     userRole.value = value
                 }
 
@@ -150,6 +147,19 @@ class CommonMiddleware {
             handleError(e, req, res)
         }
     }
+
+    handleInvalidJson = (
+        err: any,
+        req: Request,
+        res: Response,
+        next: NextFunction
+      ) => {
+        if (err instanceof SyntaxError && 'body' in err) {
+          res.status(400).json({ error: 'Invalid JSON body' });
+        } else {
+          next(err);
+        }
+      };
 }
 
 export default new CommonMiddleware()
