@@ -1,5 +1,5 @@
 import express from 'express'
-import { handleError } from '../utils/common.functions'
+import { handleError } from '../utils/common.utils'
 import MongoService from '../services/mongo.service'
 
 export class UsersMiddleware {

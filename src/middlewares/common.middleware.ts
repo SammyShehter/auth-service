@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express'
-import { handleError } from '../utils/common.functions'
+import { handleError } from '../utils/common.utils'
 import { validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import { Role } from '../types/role.type'

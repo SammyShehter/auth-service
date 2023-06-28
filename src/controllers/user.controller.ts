@@ -1,7 +1,7 @@
 import {Request, Response} from 'express'
 import UsersService from '../services/user.service'
 import { User } from '../types/user.type'
-import { handleError, handleSuccess } from '../utils/common.functions'
+import { handleError, handleSuccess } from '../utils/common.utils'
 
 class UserController {
     public getAllUsers = async (

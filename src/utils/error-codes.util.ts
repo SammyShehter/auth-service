@@ -34,31 +34,6 @@ export class ErrorCodes {
         }
     }
 
-    static get NO_timestamp(): userErrorMessage {
-        return {
-            message: "NO timestamp",
-            action: "Please provide a valid timestamp",
-            innerMessage:
-                "no timestamp sent",
-        }
-    }
-
-    static get CANT_START_NEW_SHIFT(): userErrorMessage {
-        return {
-            message: "CAN'T START NEW SHIFT",
-            action: "Please end your current shift before starting a new one",
-            innerMessage: "User tried start new shift before ending previous"
-        }
-    }
-        static get CANT_END_SHIFT(): userErrorMessage {
-        return {
-            message: "CAN'T END SHIFT",
-            action: "Please start your shift before ending",
-            innerMessage: "User tried end shift before starting"
-        }
-    }
-
-
     static JSON_VALIDATION_FAILED({
         action,
         // param,

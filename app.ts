@@ -4,7 +4,7 @@ import cors from "cors"
 import debug from "debug"
 import {CommonRoutesConfig} from "./src/routes/common.route"
 import {UsersRoutes} from "./src/routes/user.route"
-import {handle404} from "./src/utils/common.functions"
+import {handle404} from "./src/utils/common.utils"
 import {authEvents} from "./src/utils/events.util"
 import CommonMiddleware from "./src/middlewares/common.middleware"
 import { init } from "./src/utils/init.util"
@@ -21,6 +21,7 @@ app.use(CommonMiddleware.handleInvalidJson)
 
 init()
 
+// ignite
 authEvents.once("ready", () => {
     routes.push(new UsersRoutes(app))
     

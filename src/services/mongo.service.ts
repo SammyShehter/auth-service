@@ -32,6 +32,9 @@ class MongooseService {
         {timestamps: true, versionKey: false}
     )
 
+    private roleStorage = mongoose.model<Role>("roles", this.roleSchema)
+    private userStorage = mongoose.model<User>("users", this.userSchema)
+
     connectWithRetry = (
         eventEmmiter: EventEmitter,
         count: number = 0,
@@ -44,8 +47,8 @@ class MongooseService {
         }
         console.log("Attemptin to connect to Mongo DB")
         mongoose
-            .connect(process.env["MONGO_CONNECTION_STRING"] as string, {
-                dbName: "payPlus",
+            .connect(process.env.MONGO_CONNECTION_STRING, {
+                dbName: "Users",
             })
             .then(() => {
                 console.log("MongoDB is connected")
@@ -63,9 +66,6 @@ class MongooseService {
                 )
             })
     }
-
-    roleStorage = mongoose.model<Role>("roles", this.roleSchema)
-    userStorage = mongoose.model<User>("users", this.userSchema)
 
     findRole = async (value: string): Promise<Role> => {
         return this.roleStorage.findOne({value}, {value: 0}).exec()
