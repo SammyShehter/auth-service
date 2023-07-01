@@ -21,7 +21,7 @@ export class UsersMiddleware {
         }
     }
 
-    public checkUserNotExists = async (
+    public checkUserDoesntExists = async (
         req: express.Request,
         res: express.Response,
         next: express.NextFunction

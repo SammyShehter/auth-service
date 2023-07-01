@@ -50,11 +50,9 @@ export const handle404 = (req: any, res: Response): Response => {
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             404 REQUEST
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Request ID: ${req.operationID}
 Request Time: ${date()}
 Requested Path: ${req.originalUrl}
         `
-    console.log(message)
     fs.appendFile("404.log", message, () => {})
     return res
         .status(404)

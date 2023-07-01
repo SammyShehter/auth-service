@@ -1,13 +1,13 @@
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 import {
     User,
     ParsedUsers,
     Credentials,
     RegCredentials,
-} from '../types/user.type'
-import MongoService from './mongo.service'
-import { ErrorCodes } from '../utils/error-codes.util'
+} from "../types/user.type"
+import MongoService from "./mongo.service"
+import {ErrorCodes} from "../utils/error-codes.util"
 
 class UsersService {
     private cryptoService: any
@@ -26,7 +26,7 @@ class UsersService {
             role,
         }
 
-        return this.jwt.sign(payload, process.env.JWT_TOKEN, { expiresIn: '24h' })
+        return this.jwt.sign(payload, process.env.JWT_TOKEN, {expiresIn: "24h"})
     }
 
     private parseJwt = (jwtToken: string) => this.jwt.decode(jwtToken)
@@ -36,7 +36,7 @@ class UsersService {
     }
 
     public login = async (credentials: Credentials) => {
-        const { username, password } = credentials
+        const {username, password} = credentials
         const user = await MongoService.findUser(username)
         if (!user) {
             throw ErrorCodes.USER_NOT_FOUND
@@ -56,9 +56,12 @@ class UsersService {
     }
 
     public registration = async (regCredentials: RegCredentials) => {
-        const { username, email, portal, password } = regCredentials
+        const {username, email, portal, password, password_confirm} =
+            regCredentials
+        if (password !== password_confirm)
+            throw ErrorCodes.PASSWORD_CONFIRMATION_ERROR
         const hash = bcrypt.hashSync(password, this.saltRounds)
-        const {_id} = await MongoService.findRole('USER')
+        const {_id} = await MongoService.findRole("USER")
         const newUser: User = await MongoService.addUser({
             username,
             email,
@@ -66,8 +69,11 @@ class UsersService {
             portals: [portal],
             role: _id,
         })
-        const token = this.generateAccessToken(newUser._id, newUser.role as string)
-        return { username, token }
+        const token = this.generateAccessToken(
+            newUser._id,
+            newUser.role as string
+        )
+        return {username, token}
     }
 
     public validateUser = async (userId: string) => {

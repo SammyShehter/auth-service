@@ -158,7 +158,6 @@ ${
         ? "Request Body: " + JSON.stringify(req.body) + "\n"
         : ""
 }`
-        console.log(message)
 
         fs.appendFile("app.log", message, () => {})
         next()

@@ -65,6 +65,15 @@ export class ErrorCodes {
         }
     }
 
+    static get PASSWORD_CONFIRMATION_ERROR(): userErrorMessage {
+        return {
+            message: "PASSWORD CONFIRMATION ERROR",
+            action: "Password confirmation wont match to the password you've sent, please try again",
+            innerMessage: "Password confirmation error",
+            alert: 1,
+        }
+    }
+
     static JSON_VALIDATION_FAILED({
         action,
         param,

@@ -31,7 +31,7 @@ export class UsersRoutes extends CommonRoutesConfig {
                 CommonMiddleware.saveRequest,
                 UserValidator.registrationChecks,
                 UsersMiddleware.ecoSystemUser(["polemica", "blogue", "tests"]), // TODO: Array should move to .env
-                UsersMiddleware.checkUserNotExists
+                UsersMiddleware.checkUserDoesntExists
             )
             .post(UsersController.registration)
         this.app

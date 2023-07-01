@@ -27,4 +27,5 @@ export type RegCredentials = {
     email: string
     password: string
     portal: string
+    password_confirm: string
 }

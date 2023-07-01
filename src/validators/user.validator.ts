@@ -47,6 +47,17 @@ class UsersValidator extends CommonValidator {
             .withMessage(`Please send the password as a string`)
             .isLength({max: 15})
             .withMessage(`Please limit password to 15 characters`),
+        body("password_confirm")
+            .exists()
+            .withMessage(`Please provide password confirmation`)
+            .notEmpty()
+            .withMessage(`Please provide password confirmation`)
+            .trim()
+            .escape()
+            .isString()
+            .withMessage(`Please send the password confirmation as a string`)
+            .isLength({max: 15})
+            .withMessage(`Please limit password confirmation to 15 characters`),
     ])
 
     loginChecks = this.validate([
