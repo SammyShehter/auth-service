@@ -28,7 +28,7 @@ export const handleError = (
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         REQUEST ${status === 400 ? "ERROR" : "WARNING"}!     
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Request ID: ${req.correlation_id}
+Request ID: ${req.operationID}
 Error Time: ${date()}
 ${
     isSystemError
@@ -50,7 +50,7 @@ export const handle404 = (req: any, res: Response): Response => {
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             404 REQUEST
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Request ID: ${req.correlation_id}
+Request ID: ${req.operationID}
 Request Time: ${date()}
 Requested Path: ${req.originalUrl}
         `

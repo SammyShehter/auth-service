@@ -10,7 +10,7 @@ class UserController {
     ) => {
         try {
             const users = await UsersService.getAllUsers()
-            return handleSuccess(users, req, res)
+            return handleSuccess(users, res)
         } catch (e) {
             return handleError(e, req, res)
         }
@@ -20,7 +20,7 @@ class UserController {
         try {
             const credentials = req.body
             const token = await UsersService.login(credentials)
-            return handleSuccess({token}, req, res)
+            return handleSuccess({token}, res)
         } catch (e) {
             return handleError(e, req, res)
         }
@@ -34,7 +34,7 @@ class UserController {
             const regCredentials = req.body
             const { username, token } = await UsersService.registration(regCredentials)
             const response = { message: `${username} user was created!`, token }
-            return handleSuccess(response, req, res, 201)
+            return handleSuccess(response, res, 201)
         } catch (e) {
             return handleError(e, req, res)
         }
@@ -47,7 +47,7 @@ class UserController {
         try {
             const {id} = req.user
             const user: User = await UsersService.validateUser(id)
-            return handleSuccess(user, req, res)
+            return handleSuccess(user, res)
         } catch (e) {
             handleError(e, req, res)
         }
@@ -60,7 +60,7 @@ class UserController {
         try {
             const userToken: string = req.body.token
             const user: User = await UsersService.validateInnerCall(userToken)
-            return handleSuccess(user, req, res)
+            return handleSuccess(user, res)
         } catch (e) {
             handleError(e, req, res)
         }

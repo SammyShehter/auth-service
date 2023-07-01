@@ -1,13 +1,14 @@
 import {validationResult} from "express-validator"
 import {Request, Response, NextFunction} from "express"
-import {ErrorCodes} from "../utils/error-codes.util"
+import { ErrorCodes } from "../utils/error-codes.util"
 import { handleError } from "../utils/common.utils"
 
 export default class CommonValidator {
     customValidationResult = validationResult.withDefaults({
-        formatter: ({msg}) => {
+        formatter: ({msg, param}) => {
             return ErrorCodes.JSON_VALIDATION_FAILED({
                 action: msg,
+                param,
             })
         },
     })

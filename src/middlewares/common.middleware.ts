@@ -1,9 +1,12 @@
-import {Request, Response, NextFunction} from 'express'
-import { handleError } from '../utils/common.utils'
-import { validationResult } from 'express-validator'
-import jwt from 'jsonwebtoken'
-import { Role } from '../types/role.type'
-import MongoServices from '../services/mongo.service'
+import fs from "fs"
+import {Request, Response, NextFunction} from "express"
+import {handleError} from "../utils/common.utils"
+import {validationResult} from "express-validator"
+import jwt from "jsonwebtoken"
+import {Role} from "../types/role.type"
+import MongoServices from "../services/mongo.service"
+import {randomUUID} from "crypto"
+import {ErrorCodes} from "../utils/error-codes.util"
 
 class CommonMiddleware {
     validatorErrors = async (
@@ -23,18 +26,17 @@ class CommonMiddleware {
         }
     }
 
-    auth = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) => {
+    auth = async (req: Request, res: Response, next: NextFunction) => {
         try {
             if (req.headers.authorization)
                 return this.authUserToken(req, res, next)
 
             if (req.headers.apikey) return this.apiKeyAuth(req, res, next)
-            
-            throw new Error('No authentication provided')
+
+            throw ErrorCodes.ACCESS_DENIED(
+                req.originalUrl,
+                "CommonMiddleware.auth"
+            )
         } catch (e) {
             handleError(e, req, res, 401)
         }
@@ -49,11 +51,14 @@ class CommonMiddleware {
             const apikey = req.headers.inner_call
             if (apikey === process.env.APIKEY) {
                 req.user = {
-                    role: 'SERVER',
+                    role: "SERVER",
                 }
                 next()
             } else {
-                throw new Error('Api key is not correct')
+                throw ErrorCodes.ACCESS_DENIED(
+                    req.originalUrl,
+                    "CommonMiddleware.apiKeyAuth"
+                )
             }
         } catch (e) {
             handleError(e, req, res, 401)
@@ -66,9 +71,9 @@ class CommonMiddleware {
         next: NextFunction
     ) => {
         try {
-            const token = req.headers.authorization?.split(' ')[1]
+            const token = req.headers.authorization?.split(" ")[1]
             if (!token) {
-                throw new Error(`No token provided`)
+                throw ErrorCodes.TOKEN_ABSENT
             }
             const decodedData = jwt.verify(token, process.env.JWT_TOKEN)
             req.user = decodedData
@@ -79,46 +84,27 @@ class CommonMiddleware {
     }
 
     authRole = (allowedRoles: string[]) => {
-        return async (
-            req: Request,
-            res: Response,
-            next: NextFunction
-        ) => {
+        return async (req: Request, res: Response, next: NextFunction) => {
             try {
                 const userRole: Role = {
                     value: null,
                 }
-                if (req.user.role === 'SERVER') {
-                    userRole.value = 'SERVER'
-                } else {
-                    const { value } = await MongoServices.findRoleById(req.user.role)
-                    userRole.value = value
-                }
+                const {value} = await MongoServices.findRoleById(req.user.role)
+                userRole.value = value
 
-                let hasPermission: boolean = false
-                allowedRoles.forEach((role) => {
-                    if (role === userRole.value) {
-                        hasPermission = true
-                    }
-                })
-                if (!hasPermission) {
-                    throw new Error(
-                        `You're not allowed to recieve this content`
-                    )
-                } else {
-                    next()
-                }
+                let hasPermission = allowedRoles.includes(userRole.value)
+                if (hasPermission) return next()
+                throw ErrorCodes.ACCESS_DENIED(
+                    req.originalUrl,
+                    "CommonMiddleware.authRole"
+                )
             } catch (e) {
                 handleError(e, req, res, 401)
             }
         }
     }
 
-    senderCheck = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) => {
+    senderCheck = async (req: Request, res: Response, next: NextFunction) => {
         try {
             // Get the request adress
             // Match it to the allowed list of senders,
@@ -129,15 +115,11 @@ class CommonMiddleware {
         }
     }
 
-    trimStrings = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) => {
+    trimStrings = async (req: Request, res: Response, next: NextFunction) => {
         try {
             //Trim all strings coming
             for (let prop in req.body) {
-                if (typeof req.body[prop] === 'string') {
+                if (typeof req.body[prop] === "string") {
                     req.body[prop].trim()
                 }
             }
@@ -153,13 +135,34 @@ class CommonMiddleware {
         req: Request,
         res: Response,
         next: NextFunction
-      ) => {
-        if (err instanceof SyntaxError && 'body' in err) {
-          res.status(400).json({ error: 'Invalid JSON body' });
+    ) => {
+        if (err instanceof SyntaxError && "body" in err) {
+            res.status(400).json({error: "Invalid JSON body"})
         } else {
-          next(err);
+            next(err)
         }
-      };
+    }
+
+    saveRequest = async (
+        req: Request,
+        _: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        req.operationID = randomUUID()
+        const message = `
+Request ID: ${req.operationID}
+Method: ${req.method} 
+Requested URL: ${req.originalUrl} 
+${
+    Object.keys(req.body).length !== 0
+        ? "Request Body: " + JSON.stringify(req.body) + "\n"
+        : ""
+}`
+        console.log(message)
+
+        fs.appendFile("app.log", message, () => {})
+        next()
+    }
 }
 
 export default new CommonMiddleware()

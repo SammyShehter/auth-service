@@ -6,7 +6,7 @@ declare global {
     namespace Express {
         interface Request {
             user: decodedUser,
-            correlation_id: string
+            operationID: string
         }
     }
 }

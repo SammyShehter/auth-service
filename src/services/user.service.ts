@@ -7,6 +7,7 @@ import {
     RegCredentials,
 } from '../types/user.type'
 import MongoService from './mongo.service'
+import { ErrorCodes } from '../utils/error-codes.util'
 
 class UsersService {
     private cryptoService: any
@@ -38,9 +39,7 @@ class UsersService {
         const { username, password } = credentials
         const user = await MongoService.findUser(username)
         if (!user) {
-            throw new Error(
-                `One or more fields are incorrect, please review your request`
-            )
+            throw ErrorCodes.USER_NOT_FOUND
         }
         const validatePassword = this.cryptoService.compareSync(
             password,
@@ -59,12 +58,12 @@ class UsersService {
     public registration = async (regCredentials: RegCredentials) => {
         const { username, email, portal, password } = regCredentials
         const hash = bcrypt.hashSync(password, this.saltRounds)
-        const {_id} = await MongoService.findRole('ADMIN')
+        const {_id} = await MongoService.findRole('USER')
         const newUser: User = await MongoService.addUser({
             username,
             email,
             password: hash,
-            portals: [portal || 'blogue'],
+            portals: [portal],
             role: _id,
         })
         const token = this.generateAccessToken(newUser._id, newUser.role as string)

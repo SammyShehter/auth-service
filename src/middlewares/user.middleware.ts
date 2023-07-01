@@ -1,6 +1,7 @@
 import express from 'express'
 import { handleError } from '../utils/common.utils'
 import MongoService from '../services/mongo.service'
+import { ErrorCodes } from '../utils/error-codes.util'
 
 export class UsersMiddleware {
     public ecoSystemUser = (allowedPortal: string[]) => async (
@@ -10,11 +11,10 @@ export class UsersMiddleware {
     ) => {
         try {
             const portalUser = req.body.portal
-            
             if(portalUser && allowedPortal.includes(portalUser)){
-                next()
+                return next()
             } else {
-                throw new Error('This type of portal is not supported')
+                throw ErrorCodes.PORTAL_NOT_SUPPORTED
             }
         } catch (e) {
             handleError(e, req, res, 400)
@@ -30,7 +30,7 @@ export class UsersMiddleware {
             const {username} = req.body
             const candidate = await MongoService.findUser(username)
             if(candidate){
-                throw new Error('User already exists!')
+                throw ErrorCodes.EMAIL_ALREADY_IN_USE
             }
             next()
         } catch (e) {

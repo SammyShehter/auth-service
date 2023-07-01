@@ -27,7 +27,7 @@ class MongooseService {
             password: {type: String, required: true},
             email: {type: String, unique: true},
             portals: {type: [String], required: true},
-            role: {type: SchemaTypes.ObjectId, ref: "Roles"},
+            role: {type: SchemaTypes.ObjectId, ref: "roles"},
         },
         {timestamps: true, versionKey: false}
     )
@@ -48,7 +48,7 @@ class MongooseService {
         console.log("Attemptin to connect to Mongo DB")
         mongoose
             .connect(process.env.MONGO_CONNECTION_STRING, {
-                dbName: "Users",
+                dbName: "auth",
             })
             .then(() => {
                 console.log("MongoDB is connected")
@@ -68,7 +68,8 @@ class MongooseService {
     }
 
     findRole = async (value: string): Promise<Role> => {
-        return this.roleStorage.findOne({value}, {value: 0}).exec()
+        const res = await this.roleStorage.findOne({value}, {value: 0}).exec()
+        return res
     }
 
     findRoleById = async (_id: string): Promise<Role> => {
@@ -76,7 +77,7 @@ class MongooseService {
     }
 
     getAllUsers = async (): Promise<ParsedUsers> => {
-        return this.userStorage.find({}, {_id: 0, password: 0}).lean()
+        return this.userStorage.find({}, {_id: 0, password: 0}).populate({path: "role", select: "value -_id"}).lean()
     }
 
     addUser = async (userFields: CreateUserDto): Promise<User> => {
