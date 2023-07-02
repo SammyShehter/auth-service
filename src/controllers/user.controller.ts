@@ -12,7 +12,7 @@ class UserController {
             const users = await UsersService.getAllUsers()
             return handleSuccess(users, res)
         } catch (e) {
-            return handleError(e, req, res)
+            return handleError(e, res)
         }
     }
 
@@ -22,7 +22,7 @@ class UserController {
             const token = await UsersService.login(credentials)
             return handleSuccess({token}, res)
         } catch (e) {
-            return handleError(e, req, res)
+            return handleError(e, res)
         }
     }
 
@@ -36,7 +36,7 @@ class UserController {
             const response = { message: `${username} user was created!`, token }
             return handleSuccess(response, res, 201)
         } catch (e) {
-            return handleError(e, req, res)
+            return handleError(e, res)
         }
     }
 
@@ -49,7 +49,7 @@ class UserController {
             const user: User = await UsersService.validateUser(id)
             return handleSuccess(user, res)
         } catch (e) {
-            handleError(e, req, res)
+            handleError(e, res)
         }
     }
 
@@ -62,7 +62,7 @@ class UserController {
             const user: User = await UsersService.validateInnerCall(userToken)
             return handleSuccess(user, res)
         } catch (e) {
-            handleError(e, req, res)
+            handleError(e, res)
         }
     }
 }

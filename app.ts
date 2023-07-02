@@ -1,7 +1,6 @@
 import * as http from "http"
 import express from "express"
 import cors from "cors"
-import debug from "debug"
 import {CommonRoutesConfig} from "./src/routes/common.route"
 import {UsersRoutes} from "./src/routes/user.route"
 import {handle404} from "./src/utils/common.utils"
@@ -13,7 +12,6 @@ const app: express.Application = express()
 const server: http.Server = http.createServer(app)
 const port: string = process.env.PORT
 const routes: Array<CommonRoutesConfig> = []
-const debugLog: debug.IDebugger = debug("app")
 
 app.use(cors())
 app.use(express.json())
@@ -39,7 +37,4 @@ function startServer() {
 ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝      ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝
    `)
     console.log(`Server is listening on port ${port}`)
-    routes.forEach((route: CommonRoutesConfig) => {
-        debugLog(`Routes configured for ${route.getName()}`)
-    })
 }

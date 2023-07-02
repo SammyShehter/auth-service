@@ -4,7 +4,7 @@ import {handleError} from "../utils/common.utils"
 import {validationResult} from "express-validator"
 import jwt from "jsonwebtoken"
 import {Role} from "../types/role.type"
-import MongoServices from "../services/mongo.service"
+import MongoService from "../services/mongo.service"
 import {randomUUID} from "crypto"
 import {ErrorCodes} from "../utils/error-codes.util"
 
@@ -22,7 +22,7 @@ class CommonMiddleware {
                 next()
             }
         } catch (e) {
-            handleError(e, req, res)
+            handleError(e, res)
         }
     }
 
@@ -38,7 +38,7 @@ class CommonMiddleware {
                 "CommonMiddleware.auth"
             )
         } catch (e) {
-            handleError(e, req, res, 401)
+            return handleError(e, res, 401)
         }
     }
 
@@ -61,7 +61,7 @@ class CommonMiddleware {
                 )
             }
         } catch (e) {
-            handleError(e, req, res, 401)
+            return handleError(e, res, 401)
         }
     }
 
@@ -79,7 +79,7 @@ class CommonMiddleware {
             req.user = decodedData
             next()
         } catch (e) {
-            handleError(e, req, res, 401)
+            return handleError(e, res, 401)
         }
     }
 
@@ -89,17 +89,17 @@ class CommonMiddleware {
                 const userRole: Role = {
                     value: null,
                 }
-                const {value} = await MongoServices.findRoleById(req.user.role)
+                const {value} = await MongoService.findRoleById(req.user.role)
                 userRole.value = value
 
-                let hasPermission = allowedRoles.includes(userRole.value)
-                if (hasPermission) return next()
+                if (allowedRoles.includes(userRole.value)) return next()
+
                 throw ErrorCodes.ACCESS_DENIED(
                     req.originalUrl,
                     "CommonMiddleware.authRole"
                 )
             } catch (e) {
-                handleError(e, req, res, 401)
+                return handleError(e, res, 401)
             }
         }
     }
@@ -111,7 +111,7 @@ class CommonMiddleware {
             // save to req.sender name of service
             next()
         } catch (e) {
-            handleError(e, req, res)
+            handleError(e, res)
         }
     }
 
@@ -126,7 +126,7 @@ class CommonMiddleware {
 
             next()
         } catch (e) {
-            handleError(e, req, res)
+            handleError(e, res)
         }
     }
 
@@ -159,7 +159,7 @@ ${
         : ""
 }`
 
-        fs.appendFile("app.log", message, () => {})
+        fs.appendFileSync("app.log", message)
         next()
     }
 }

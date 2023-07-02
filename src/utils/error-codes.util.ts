@@ -1,8 +1,8 @@
-import {userErrorMessage} from "../types/error.type"
+import {ErrorCode} from "../types/common.type"
 import {jsonValidationError} from "../types/http.type"
 
 export class ErrorCodes {
-    static get GENERAL_ERROR(): userErrorMessage {
+    static get GENERAL_ERROR(): ErrorCode {
         return {
             message: "GENERAL ERROR",
             action: "action message",
@@ -11,7 +11,7 @@ export class ErrorCodes {
         }
     }
 
-    static get TOKEN_ABSENT(): userErrorMessage {
+    static get TOKEN_ABSENT(): ErrorCode {
         return {
             message: "TOKEN ABSENT",
             action: "Please provide a valid user token",
@@ -20,7 +20,7 @@ export class ErrorCodes {
         }
     }
 
-    static get INVALID_CREDENTIALS(): userErrorMessage {
+    static get INVALID_CREDENTIALS(): ErrorCode {
         return {
             message: "INVALID CREDENTIALS",
             action: "Please use a valid username and password",
@@ -29,7 +29,7 @@ export class ErrorCodes {
         }
     }
 
-    static get INVALID_TOKEN(): userErrorMessage {
+    static get INVALID_TOKEN(): ErrorCode {
         return {
             message: "INVALID TOKEN",
             action: "Please use a valid user token",
@@ -38,7 +38,7 @@ export class ErrorCodes {
         }
     }
 
-    static get PORTAL_NOT_SUPPORTED(): userErrorMessage {
+    static get PORTAL_NOT_SUPPORTED(): ErrorCode {
         return {
             message: "PORTAL NOT SUPPORTED",
             action: "Please provide a valid portal",
@@ -47,7 +47,7 @@ export class ErrorCodes {
         }
     }
 
-    static get EMAIL_ALREADY_IN_USE(): userErrorMessage {
+    static get EMAIL_ALREADY_IN_USE(): ErrorCode {
         return {
             message: "EMAIL ALREADY IN USE",
             action: "Please use another email",
@@ -56,7 +56,7 @@ export class ErrorCodes {
         }
     }
 
-    static get USER_NOT_FOUND(): userErrorMessage {
+    static get USER_NOT_FOUND(): ErrorCode {
         return {
             message: "USER NOT FOUND",
             action: "Please use a valid account",
@@ -65,7 +65,7 @@ export class ErrorCodes {
         }
     }
 
-    static get PASSWORD_CONFIRMATION_ERROR(): userErrorMessage {
+    static get PASSWORD_CONFIRMATION_ERROR(): ErrorCode {
         return {
             message: "PASSWORD CONFIRMATION ERROR",
             action: "Password confirmation wont match to the password you've sent, please try again",
@@ -77,7 +77,7 @@ export class ErrorCodes {
     static JSON_VALIDATION_FAILED({
         action,
         param,
-    }: jsonValidationError): userErrorMessage {
+    }: jsonValidationError): ErrorCode {
         return {
             message: "JSON VALIDATION FAILED",
             action,
@@ -86,7 +86,7 @@ export class ErrorCodes {
         }
     }
 
-    static ACCESS_DENIED(path: string, here: string): userErrorMessage {
+    static ACCESS_DENIED(path: string, here: string): ErrorCode {
         return {
             message: "ACCESS DENIED",
             action: "You're not allowed to see the data",

@@ -1,6 +1,7 @@
 import fs from "fs"
-import {Response} from "express"
+import {Request, Response} from "express"
 import { ErrorCodes } from "./error-codes.util"
+import { ErrorCode } from "../types/common.type"
 
 const date = (): string => {
     return new Date().toLocaleString("he-IL")
@@ -15,12 +16,27 @@ export const handleSuccess = (
 }
 
 export const handleError = (
-    error: any,
-    req: any,
+    error: ErrorCode | Error = ErrorCodes.GENERAL_ERROR,
     res: Response,
     status: number = 400
-): Response => {
-    const isSystemError: boolean = !!error.stack
+    ): Response => {
+    let isSystemError = false
+
+    if (error instanceof Error) {
+        isSystemError = true
+        const stack = error.stack.split("\n")
+        const callerName = stack[1].trim().split(" ")[1]
+        const genericMessage = error.message
+        error = ErrorCodes.GENERAL_ERROR
+        error.innerMessage = genericMessage
+        error.caller_name = callerName
+        error.alert = 5
+    }
+
+    if (error.alert >= 3 && process.env.NODE_ENV == "prod") {
+        TelegramAPI.errorAlert(res.operationID, errorCode)
+    }
+    
     const errorLog: string[] | string = isSystemError
         ? error.stack.split(" at ")
         : error.innerMessage

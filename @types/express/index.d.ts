@@ -1,20 +1,22 @@
-import express = require('express');
-import { decodedUser } from '../../src/common/common.types';
+import express = require("express")
+import {decodedUser} from "../../src/common/common.types"
 // import { IncomingHttpHeaders } from 'http';
 
 declare global {
     namespace Express {
         interface Request {
-            user: decodedUser,
+            user: decodedUser
+            operationID: string
+        }
+        interface Response {
             operationID: string
         }
     }
 }
 
-
-declare module 'http' {
+declare module "http" {
     interface IncomingHttpHeaders {
-        apikey?:string
+        apikey?: string
         host: string
     }
 }

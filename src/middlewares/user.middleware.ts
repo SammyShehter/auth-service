@@ -17,7 +17,7 @@ export class UsersMiddleware {
                 throw ErrorCodes.PORTAL_NOT_SUPPORTED
             }
         } catch (e) {
-            handleError(e, req, res, 400)
+            return handleError(e, res, 400)
         }
     }
 
@@ -34,7 +34,7 @@ export class UsersMiddleware {
             }
             next()
         } catch (e) {
-            return handleError(e, req, res, 401)
+            return handleError(e, res, 401)
         }
     }
 }
