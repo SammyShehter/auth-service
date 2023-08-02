@@ -1,5 +1,5 @@
 import fs from "fs"
-import {Request, Response} from "express"
+import { Response} from "express"
 import { ErrorCodes } from "./error-codes.util"
 import { ErrorCode } from "../types/common.type"
 
@@ -20,10 +20,7 @@ export const handleError = (
     res: Response,
     status: number = 400
     ): Response => {
-    let isSystemError = false
-
     if (error instanceof Error) {
-        isSystemError = true
         const stack = error.stack.split("\n")
         const callerName = stack[1].trim().split(" ")[1]
         const genericMessage = error.message
@@ -32,32 +29,19 @@ export const handleError = (
         error.caller_name = callerName
         error.alert = 5
     }
-
-    if (error.alert >= 3 && process.env.NODE_ENV == "prod") {
-        TelegramAPI.errorAlert(res.operationID, errorCode)
-    }
     
-    const errorLog: string[] | string = isSystemError
-        ? error.stack.split(" at ")
-        : error.innerMessage
     const message = `
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         REQUEST ${status === 400 ? "ERROR" : "WARNING"}!     
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Request ID: ${req.operationID}
+Request ID: ${res.operationID}
 Error Time: ${date()}
-${
-    isSystemError
-        ? "Error in: " + errorLog[1] + "\n" + errorLog[0]
-        : "Error: " + errorLog
-}
+Error Message ${error.innerMessage}
     `
     fs.appendFile("error.log", message, () => {})
     return res.status(status).json({
         status: "FAILURE",
-        errors: isSystemError
-            ? [{message: ErrorCodes.GENERAL_ERROR.message}]
-            : [{message: error.message, action: error.action}],
+        errors: {message: error.message, action: error.action},
     })
 }
 
