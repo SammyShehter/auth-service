@@ -17,9 +17,9 @@ export const handleSuccess = (
 }
 
 export const handleError = (
-    error: ErrorCode | Error = ErrorCodes.GENERAL_ERROR,
+    error: ErrorCode = ErrorCodes.GENERAL_ERROR, // Can also recieve NodeJS Runtime error
     res: Response,
-    status: number = 400
+    status: number = error?.status || 400
     ): Response => {
     if (error instanceof Error) {
         const stack = error.stack.split("\n")

@@ -26,6 +26,7 @@ export class ErrorCodes {
             action: "Please use a valid username and password",
             innerMessage: "credentials are incorrect",
             alert: 1,
+            status: 401
         }
     }
 
@@ -47,12 +48,21 @@ export class ErrorCodes {
         }
     }
 
-    static get EMAIL_ALREADY_IN_USE(): ErrorCode {
+    static ALREADY_EXISTING_USER(identificator: string): ErrorCode {
         return {
-            message: "EMAIL ALREADY IN USE",
-            action: "Please use another email",
-            innerMessage: "New candidate used already registered email",
-            alert: 1,
+            message: "ALREADY EXISTING USER",
+            action: "User already exists, please use unique credentials",
+            innerMessage: `New candidate used ${identificator} which already exists`,
+            alert: 5,
+        }
+    }
+
+    static INVALID_JSON_BODY(error: any): ErrorCode {
+        return {
+            message: "INVALID JSON BODY",
+            action: "JSON sent was not valid. Please review your request",
+            innerMessage: `Req.Body JSON was invalid. Sent ${JSON.stringify(error)}`,
+            alert: 5,
         }
     }
 

@@ -88,7 +88,11 @@ class MongooseService {
         return instance
     }
 
-    findUser = async (username: string): Promise<User> => {
+    findUserByEmail = async (email: string): Promise<User> => {
+        return this.userStorage.findOne({email}).exec()
+    }
+
+    findUserByUsername = async (username: string): Promise<User> => {
         return this.userStorage.findOne({username}).exec()
     }
 

@@ -137,7 +137,7 @@ class CommonMiddleware {
         next: NextFunction
     ) => {
         if (err instanceof SyntaxError && "body" in err) {
-            res.status(400).json({error: "Invalid JSON body"})
+            handleError(ErrorCodes.INVALID_JSON_BODY(err.body),res)
         } else {
             next(err)
         }
@@ -145,10 +145,11 @@ class CommonMiddleware {
 
     saveRequest = async (
         req: Request,
-        _: Response,
+        res: Response,
         next: NextFunction
     ): Promise<void> => {
         req.operationID = randomUUID()
+        res.operationID = req.operationID
         const message = `
 Request ID: ${req.operationID}
 Method: ${req.method} 

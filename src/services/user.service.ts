@@ -37,18 +37,16 @@ class UsersService {
 
     public login = async (credentials: Credentials) => {
         const {username, password} = credentials
-        const user = await MongoService.findUser(username)
+        const user = await MongoService.findUserByUsername(username)
         if (!user) {
             throw ErrorCodes.USER_NOT_FOUND
         }
-        const validatePassword = this.cryptoService.compareSync(
+        const validPassword = this.cryptoService.compareSync(
             password,
             user.password
         )
-        if (!validatePassword) {
-            throw new Error(
-                `One or more fields are incorrect, please review your request`
-            )
+        if (!validPassword) {
+            throw ErrorCodes.INVALID_CREDENTIALS
         }
         const token = this.generateAccessToken(user._id, user.role as string)
 
