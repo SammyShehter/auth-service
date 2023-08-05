@@ -23,7 +23,7 @@ export default class CommonValidator {
             const errors = this.customValidationResult(req)
             return errors.isEmpty()
                 ? next()
-                : handleError(errors.array()[0], req, res)
+                : handleError(errors.array()[0], res)
         }
     }
 }

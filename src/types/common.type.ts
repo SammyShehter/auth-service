@@ -1,4 +1,5 @@
 export type ErrorCode = {
+    [x: string]: any
     message: string
     action: string
     innerMessage: string

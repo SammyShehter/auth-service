@@ -1,7 +1,8 @@
 import fs from "fs"
-import { Response} from "express"
-import { ErrorCodes } from "./error-codes.util"
-import { ErrorCode } from "../types/common.type"
+import {Response} from "express"
+import {ErrorCodes} from "./error-codes.util"
+import {ErrorCode} from "../types/common.type"
+import TelegramAPI from "../services/telegram.service"
 
 const date = (): string => {
     return new Date().toLocaleString("he-IL")
@@ -28,6 +29,10 @@ export const handleError = (
         error.innerMessage = genericMessage
         error.caller_name = callerName
         error.alert = 5
+    }
+
+    if(error.alert) {
+        TelegramAPI.errorAlert(res.operationID, error)
     }
     
     const message = `

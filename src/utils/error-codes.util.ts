@@ -91,7 +91,7 @@ export class ErrorCodes {
             message: "ACCESS DENIED",
             action: "You're not allowed to see the data",
             innerMessage: `User requested ${path} and failed in ${here}`,
-            alert: 3,
+            alert: 5,
         }
     }
 }
