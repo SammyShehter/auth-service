@@ -26,7 +26,7 @@ class UsersService {
             role,
         }
 
-        return this.jwt.sign(payload, process.env.JWT_TOKEN, {expiresIn: "24h"})
+        return this.jwt.sign(payload, process.env.JWT_TOKEN, {expiresIn: "20m"})
     }
 
     private parseJwt = (jwtToken: string) => this.jwt.decode(jwtToken)
@@ -50,7 +50,7 @@ class UsersService {
         }
         const token = this.generateAccessToken(user._id, user.role as string)
 
-        return token
+        return {token, user}
     }
 
     public registration = async (regCredentials: RegCredentials) => {

@@ -3,6 +3,7 @@ import {Response} from "express"
 import {ErrorCodes} from "./error-codes.util"
 import {ErrorCode} from "../types/common.type"
 import TelegramAPI from "../services/telegram.service"
+import { createHash } from "crypto"
 
 const date = (): string => {
     return new Date().toLocaleString("he-IL")
@@ -62,4 +63,8 @@ Requested Path: ${req.originalUrl}
     return res
         .status(404)
         .json({status: "FAILURE", errors: [{message: "404 not found"}]})
+}
+
+export function hashString(input: string) {
+    return createHash('sha256').update(input).digest('hex');
 }

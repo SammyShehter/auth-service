@@ -39,7 +39,7 @@ export class UsersRoutes extends CommonRoutesConfig {
             .all(
                 CommonMiddleware.saveRequest,
                 CommonMiddleware.auth,
-                CommonMiddleware.authRole(["ADMIN"])
+                CommonMiddleware.authRole(["ADMIN", "USER"])
             )
             .post(UsersController.validateUser)
 
@@ -49,7 +49,6 @@ export class UsersRoutes extends CommonRoutesConfig {
                 CommonMiddleware.saveRequest,
                 CommonMiddleware.senderCheck,
                 CommonMiddleware.apiKeyAuth,
-                CommonMiddleware.authRole(["SERVER"]),
                 UserValidator.innerRequestCheck
             )
             .post(UsersController.validateInnerCall)

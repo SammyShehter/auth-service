@@ -49,17 +49,16 @@ class CommonMiddleware {
     ) => {
         try {
             const apikey = req.headers.inner_call
-            if (apikey === process.env.APIKEY) {
-                req.user = {
-                    role: "SERVER",
-                }
-                next()
-            } else {
+            if (apikey !== process.env.APIKEY) {
                 throw ErrorCodes.ACCESS_DENIED(
                     req.originalUrl,
                     "CommonMiddleware.apiKeyAuth"
                 )
             }
+            req.user = {
+                role: "SERVER",
+            }
+            next()
         } catch (e) {
             return handleError(e, res, 401)
         }
@@ -137,7 +136,7 @@ class CommonMiddleware {
         next: NextFunction
     ) => {
         if (err instanceof SyntaxError && "body" in err) {
-            handleError(ErrorCodes.INVALID_JSON_BODY(err.body),res)
+            handleError(ErrorCodes.INVALID_JSON_BODY(err.body), res)
         } else {
             next(err)
         }
