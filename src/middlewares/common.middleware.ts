@@ -56,7 +56,7 @@ class CommonMiddleware {
                 )
             }
             req.user = {
-                role: "SERVER",
+                _id: process.env.SERVER,
             }
             next()
         } catch (e) {
@@ -88,7 +88,7 @@ class CommonMiddleware {
                 const userRole: Role = {
                     value: null,
                 }
-                const {value} = await MongoService.findRoleById(req.user.role)
+                const {value} = await MongoService.findRoleById(req.user._id)
                 userRole.value = value
 
                 if (allowedRoles.includes(userRole.value)) return next()
