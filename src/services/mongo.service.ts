@@ -1,12 +1,11 @@
 import mongoose, {Schema, SchemaTypes} from "mongoose"
-import EventEmitter from "events"
 import {Role} from "../types/role.type"
 import {ParsedUsers, User} from "../types/user.type"
 import {CreateUserDto} from "../types/create.user.dto"
 
 class MongooseService {
     constructor() {
-        console.log("MongooseService instance created")
+        console.log("> MongoDB initiated...")
     }
 
     private roleSchema = new Schema<Role>(
@@ -35,36 +34,33 @@ class MongooseService {
     private roleStorage = mongoose.model<Role>("roles", this.roleSchema)
     private userStorage = mongoose.model<User>("users", this.userSchema)
 
-    connectWithRetry = (
-        eventEmmiter: EventEmitter,
+    connectWithRetry = async (
         count: number = 0,
         retryAttempt: number = 5,
         retrySeconds: number = 5
-    ) => {
+    ): Promise<boolean> => {
         if (count >= retryAttempt) {
             console.log("Connection to Mongo DB failed")
-            process.exit(1)
+            return false
         }
-        console.log("Attemptin to connect to Mongo DB")
-        mongoose
-            .connect(process.env.MONGO_CONNECTION_STRING, {
-                dbName: "auth",
-            })
-            .then(() => {
-                console.log("MongoDB is connected")
-                eventEmmiter.emit("ready")
-            })
-            .catch(async (err) => {
-                count++
-                console.log(
-                    `MongoDB connection failed, will retry ${count}/${retryAttempt} attempt after ${retrySeconds} seconds`,
-                    err.message
-                )
-                setTimeout(
-                    () => this.connectWithRetry(eventEmmiter, count),
-                    retrySeconds * 1000
-                )
-            })
+        try {
+            await mongoose.connect(
+                process.env.MONGO_CONNECTION_STRING as string,
+                {
+                    dbName: "blogue",
+                }
+            )
+            console.log("> MongoDB connection... ok")
+            return true
+        } catch (err: any) {
+            count++
+            console.log(
+                `MongoDB connection failed, will retry ${count}/${retryAttempt} attempt after ${retrySeconds} seconds`,
+                err.message
+            )
+            await new Promise(resolve => setTimeout(resolve, retrySeconds * 1000));
+            return this.connectWithRetry(count, retryAttempt, retrySeconds);
+        }
     }
 
     findRole = async (value: string): Promise<Role> => {

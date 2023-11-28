@@ -1,4 +1,5 @@
 import MongoService from "../services/mongo.service"
+import RedisService from "../services/redis.service"
 import { authEvents } from "./events.util"
 
 export async function init() {
@@ -7,6 +8,16 @@ export async function init() {
         process.exit(1)
     }
 
-    // check data base connection
-    MongoService.connectWithRetry(authEvents)
+    const checklist = await Promise.all([
+        MongoService.connectWithRetry(),
+        RedisService.connectWithRetry(),
+    ])
+
+    if (checklist.every(pass => pass)) {
+        console.log("> Everything is ok!")
+        authEvents.emit("go")
+    } else {
+        console.log("checks failed", checklist)
+        process.exit(1)
+    }
 }
