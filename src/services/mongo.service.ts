@@ -47,7 +47,7 @@ class MongooseService {
             await mongoose.connect(
                 process.env.MONGO_CONNECTION_STRING as string,
                 {
-                    dbName: "blogue",
+                    dbName: process.env.DBNAME,
                 }
             )
             console.log("> MongoDB connection... ok")
