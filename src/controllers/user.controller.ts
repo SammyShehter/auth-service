@@ -18,7 +18,7 @@ class UserController {
         try {
             const credentials = req.body
             const {token, user} = await UsersService.login(credentials)
-            Redis.set(`user:${hashString(token)}`, user, 60)
+            Redis.set(`user:${hashString(token)}`, user, 60*20)
             return handleSuccess({token}, res)
         } catch (e) {
             return handleError(e, res)
@@ -52,7 +52,7 @@ class UserController {
         try {
             const userToken: string = req.body.token
             const user: User = await UsersService.validateInnerCall(userToken)
-            Redis.set(`user:${hashString(userToken)}`, user, 60)
+            Redis.set(`user:${hashString(userToken)}`, user, 60*20)
             return handleSuccess(user, res)
         } catch (e) {
             handleError(e, res)

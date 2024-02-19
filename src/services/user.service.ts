@@ -59,13 +59,16 @@ class UsersService {
         if (password !== password_confirm)
             throw ErrorCodes.PASSWORD_CONFIRMATION_ERROR
         const hash = bcrypt.hashSync(password, this.saltRounds)
-        const {_id} = await MongoService.findRole("USER")
+        const role = await MongoService.findRole("USER")
+        if(!role || !role._id) {
+            throw ErrorCodes.ROLE_NOT_FOUND
+        }
         const newUser: User = await MongoService.addUser({
             username,
             email,
             password: hash,
             portals: [portal],
-            role: _id,
+            role: role._id,
         })
         const token = this.generateAccessToken(
             newUser._id,

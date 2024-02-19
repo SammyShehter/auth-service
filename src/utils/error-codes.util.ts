@@ -75,6 +75,15 @@ export class ErrorCodes {
         }
     }
 
+    static get ROLE_NOT_FOUND(): ErrorCode {
+        return {
+            message: "ROLE NOT FOUND",
+            action: "Please contact admin for role assignment",
+            innerMessage: "Cold start demands roles table to have 'USER' role. Please add it ASAP",
+            alert: 5,
+        }
+    }
+
     static get PASSWORD_CONFIRMATION_ERROR(): ErrorCode {
         return {
             message: "PASSWORD CONFIRMATION ERROR",
