@@ -89,7 +89,7 @@ class MongooseService {
     }
 
     findUserByUsername = async (username: string): Promise<User> => {
-        return this.userStorage.findOne({username}).exec()
+        return this.userStorage.findOne({username}).populate("roles").exec()
     }
 
     findUserById = async (id: string): Promise<User> => {

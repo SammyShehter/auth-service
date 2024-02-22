@@ -37,10 +37,6 @@ class Redis {
         }
     }
 
-    get client() {
-        return this.globalClient
-    }
-
     get = (key: string) => {
         return this.globalClient.get(key)
     }
