@@ -3,7 +3,7 @@ import {Types} from 'mongoose'
 export type User = {
     _id?: string
     username: string
-    role: string | Types.ObjectId
+    role: string | Types.ObjectId | {value: string}
     email: string
     password?: string
     portals: Array<string>

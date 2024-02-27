@@ -64,16 +64,16 @@ class MongooseService {
     }
 
     findRole = async (value: string): Promise<Role> => {
-        const res = await this.roleStorage.findOne({value}, {value: 0}).exec()
+        const res = await this.roleStorage.findOne({value}, {value: 0}).lean().exec()
         return res
     }
 
     findRoleById = async (_id: string): Promise<Role> => {
-        return this.roleStorage.findOne({_id}, {_id: 0}).exec()
+        return this.roleStorage.findOne({_id}, {_id: 0}).lean().exec()
     }
 
     getAllUsers = async (): Promise<ParsedUsers> => {
-        return this.userStorage.find({}, {_id: 0, password: 0}).populate({path: "role", select: "value -_id"}).lean()
+        return this.userStorage.find({}, {_id: 0, password: 0}).populate({path: "role", select: "value -_id"}).lean().exec()
     }
 
     addUser = async (userFields: CreateUserDto): Promise<User> => {
@@ -85,11 +85,11 @@ class MongooseService {
     }
 
     findUserByEmail = async (email: string): Promise<User> => {
-        return this.userStorage.findOne({email}).exec()
+        return this.userStorage.findOne({email}).lean().exec()
     }
 
     findUserByUsername = async (username: string): Promise<User> => {
-        return this.userStorage.findOne({username}).populate("roles").exec()
+        return this.userStorage.findOne({username}).populate("role").lean().exec()
     }
 
     findUserById = async (id: string): Promise<User> => {
@@ -108,7 +108,7 @@ class MongooseService {
     }
 
     removeUser = async (username: string): Promise<boolean> => {
-        await this.userStorage.deleteOne({username}).exec()
+        await this.userStorage.deleteOne({username}).lean().exec()
         return true
     }
 }

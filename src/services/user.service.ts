@@ -48,7 +48,7 @@ class UsersService {
         if (!validPassword) {
             throw ErrorCodes.INVALID_CREDENTIALS
         }
-        const token = this.generateAccessToken(user._id, user.role as string)
+        const token = this.generateAccessToken(user._id, user.role['value'])
 
         return {token, user}
     }
@@ -72,7 +72,7 @@ class UsersService {
         })
         const token = this.generateAccessToken(
             newUser._id,
-            newUser.role as string
+            newUser.role['value']
         )
         return {username, token}
     }

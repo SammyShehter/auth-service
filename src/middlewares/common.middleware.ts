@@ -88,8 +88,8 @@ class CommonMiddleware {
                 const userRole: Role = {
                     value: null,
                 }
-                const {value} = await MongoService.findRoleById(req.user._id)
-                userRole.value = value
+                const user = await MongoService.findUserById(req.user.id)
+                userRole.value = user?.role as string
 
                 if (allowedRoles.includes(userRole.value)) return next()
 
