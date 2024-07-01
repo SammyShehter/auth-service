@@ -162,6 +162,26 @@ ${
         fs.appendFileSync("app.log", message)
         next()
     }
+
+    fixedDelayMiddleware =
+        (fixedDelay: number) =>
+        (_: Request, res: Response, next: NextFunction) => {
+            const startTime = Date.now()
+
+            res.delayedSend = (method: Function, data: any) => {
+                const elapsedTime = Date.now() - startTime
+                const remainingTime = fixedDelay - elapsedTime
+
+                setTimeout(
+                    () => {
+                        method(data, res)
+                    },
+                    remainingTime > 0 ? remainingTime : 0
+                )
+            }
+
+            next()
+        }
 }
 
 export default new CommonMiddleware()

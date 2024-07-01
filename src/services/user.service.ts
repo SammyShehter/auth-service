@@ -39,14 +39,14 @@ class UsersService {
         const {username, password} = credentials
         const user = await MongoService.findUserByUsername(username)
         if (!user) {
-            throw ErrorCodes.USER_NOT_FOUND
+            throw ErrorCodes.USER_NOT_FOUND(credentials)
         }
         const validPassword = this.cryptoService.compareSync(
             password,
             user.password
         )
         if (!validPassword) {
-            throw ErrorCodes.INVALID_CREDENTIALS
+            throw ErrorCodes.INVALID_CREDENTIALS(credentials)
         }
         const token = this.generateAccessToken(user._id, user.role['value'])
 

@@ -22,7 +22,11 @@ export class UsersRoutes extends CommonRoutesConfig {
 
         this.app
             .route("/login")
-            .all(CommonMiddleware.saveRequest, UserValidator.loginChecks)
+            .all(
+                CommonMiddleware.saveRequest,
+                CommonMiddleware.fixedDelayMiddleware(4000),
+                UserValidator.loginChecks
+            )
             .post(UsersController.login)
 
         this.app

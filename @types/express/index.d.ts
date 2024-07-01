@@ -10,6 +10,7 @@ declare global {
         }
         interface Response {
             operationID: string
+            delayedSend: Function
         }
     }
 }

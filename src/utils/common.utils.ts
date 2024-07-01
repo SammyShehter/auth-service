@@ -29,7 +29,7 @@ export const handleError = (
         error = ErrorCodes.GENERAL_ERROR
         error.innerMessage = genericMessage
         error.caller_name = callerName
-        error.alert = 5
+        error.alert = true
     }
 
     if(error.alert) {

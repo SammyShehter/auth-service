@@ -19,9 +19,9 @@ class UserController {
             const credentials = req.body
             const {token, user} = await UsersService.login(credentials)
             Redis.set(`user:${hashString(token)}`, user, 60*20)
-            return handleSuccess({token}, res)
+            return res.delayedSend(handleSuccess, {token})
         } catch (e) {
-            return handleError(e, res)
+            return res.delayedSend(handleError, e)
         }
     }
 

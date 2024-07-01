@@ -2,7 +2,7 @@ export type ErrorCode = {
     message: string
     action: string
     innerMessage: string
-    alert: number
+    alert: boolean
     inner_message?: string
     caller_name?: string
     status?: number
