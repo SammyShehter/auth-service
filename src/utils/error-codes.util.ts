@@ -1,6 +1,6 @@
 import {ErrorCode} from "../types/common.type"
 import {jsonValidationError} from "../types/http.type"
-import { Credentials } from "../types/user.type"
+import {Credentials} from "../types/user.type"
 
 export class ErrorCodes {
     static get GENERAL_ERROR(): ErrorCode {
@@ -61,7 +61,9 @@ export class ErrorCodes {
         return {
             message: "INVALID JSON BODY",
             action: "JSON sent was not valid. Please review your request",
-            innerMessage: `Req.Body JSON was invalid. Sent ${JSON.stringify(error)}`,
+            innerMessage: `Req.Body JSON was invalid. Sent ${JSON.stringify(
+                error
+            )}`,
             alert: true,
         }
     }
@@ -79,7 +81,8 @@ export class ErrorCodes {
         return {
             message: "ROLE NOT FOUND",
             action: "Please contact admin for role assignment",
-            innerMessage: "Cold start demands roles table to have 'USER' role. Please add it ASAP",
+            innerMessage:
+                "Cold start demands roles table to have 'USER' role. Please add it ASAP",
             alert: true,
         }
     }

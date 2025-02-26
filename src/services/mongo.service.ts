@@ -58,13 +58,18 @@ class MongooseService {
                 `MongoDB connection failed, will retry ${count}/${retryAttempt} attempt after ${retrySeconds} seconds`,
                 err.message
             )
-            await new Promise(resolve => setTimeout(resolve, retrySeconds * 1000));
-            return this.connectWithRetry(count, retryAttempt, retrySeconds);
+            await new Promise((resolve) =>
+                setTimeout(resolve, retrySeconds * 1000)
+            )
+            return this.connectWithRetry(count, retryAttempt, retrySeconds)
         }
     }
 
     findRole = async (value: string): Promise<Role> => {
-        const res = await this.roleStorage.findOne({value}, {value: 0}).lean().exec()
+        const res = await this.roleStorage
+            .findOne({value}, {value: 0})
+            .lean()
+            .exec()
         return res
     }
 
@@ -73,7 +78,11 @@ class MongooseService {
     }
 
     getAllUsers = async (): Promise<ParsedUsers> => {
-        return this.userStorage.find({}, {_id: 0, password: 0}).populate({path: "role", select: "value -_id"}).lean().exec()
+        return this.userStorage
+            .find({}, {_id: 0, password: 0})
+            .populate({path: "role", select: "value -_id"})
+            .lean()
+            .exec()
     }
 
     addUser = async (userFields: CreateUserDto): Promise<User> => {
@@ -89,7 +98,11 @@ class MongooseService {
     }
 
     findUserByUsername = async (username: string): Promise<User> => {
-        return this.userStorage.findOne({username}).populate("role").lean().exec()
+        return this.userStorage
+            .findOne({username})
+            .populate("role")
+            .lean()
+            .exec()
     }
 
     findUserById = async (id: string): Promise<User> => {

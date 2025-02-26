@@ -1,6 +1,6 @@
 import MongoService from "../services/mongo.service"
 import RedisService from "../services/redis.service"
-import { authEvents } from "./events.util"
+import {authEvents} from "./events.util"
 
 export async function init() {
     if (process.env.INIT !== "fine") {
@@ -13,7 +13,7 @@ export async function init() {
         RedisService.connectWithRetry(),
     ])
 
-    if (checklist.every(pass => pass)) {
+    if (checklist.every((pass) => pass)) {
         console.log("> Everything is ok!")
         authEvents.emit("go")
     } else {

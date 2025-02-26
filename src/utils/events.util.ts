@@ -1,3 +1,3 @@
-import { EventEmitter } from "stream";
+import {EventEmitter} from "stream"
 
-export const authEvents = new EventEmitter();
+export const authEvents = new EventEmitter()

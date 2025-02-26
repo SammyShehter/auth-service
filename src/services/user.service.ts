@@ -48,7 +48,7 @@ class UsersService {
         if (!validPassword) {
             throw ErrorCodes.INVALID_CREDENTIALS(credentials)
         }
-        const token = this.generateAccessToken(user._id, user.role['value'])
+        const token = this.generateAccessToken(user._id, user.role["value"])
 
         return {token, user}
     }
@@ -60,7 +60,7 @@ class UsersService {
             throw ErrorCodes.PASSWORD_CONFIRMATION_ERROR
         const hash = bcrypt.hashSync(password, this.saltRounds)
         const role = await MongoService.findRole("USER")
-        if(!role || !role._id) {
+        if (!role || !role._id) {
             throw ErrorCodes.ROLE_NOT_FOUND
         }
         const newUser: User = await MongoService.addUser({
@@ -72,7 +72,7 @@ class UsersService {
         })
         const token = this.generateAccessToken(
             newUser._id,
-            newUser.role['value']
+            newUser.role["value"]
         )
         return {username, token}
     }
