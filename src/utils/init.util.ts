@@ -1,5 +1,5 @@
 import MongoService from "../services/mongo.service"
-import RedisService from "../services/redis.service"
+// import RedisService from "../services/redis.service"
 import {authEvents} from "./events.util"
 
 export async function init() {
@@ -10,7 +10,7 @@ export async function init() {
 
     const checklist = await Promise.all([
         MongoService.connectWithRetry(),
-        RedisService.connectWithRetry(),
+        // RedisService.connectWithRetry(),
     ])
 
     if (checklist.every((pass) => pass)) {
